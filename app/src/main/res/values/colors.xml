@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="text_red">#8D0034</color>
+    <color name="under_line">#D8D8D8</color>
+    <color name="box_border_grey">#EBEBEB</color>
+    <color name="text_grey">#8E8E8E</color>
+    <color name="light_grey_bg_cv">#f6f6f6</color>
+    <color name="card_grey_bg">#E3E3E3</color>
+    <color name="dark_grey">#343434</color>
+    <color name="fragment_grey_bg_color">#707070</color>
+    <color name="status_bar_blur_red">#57343d</color>
+    <color name="add_button_red">#8B1736</color>
+    <color name="error_red">#8E1537</color>
+    <color name="light_blue">#00A1E4</color>
+    <color name="products_card_border">#D6D3D4</color>
+    <color name="red_line">#A01E40</color>
+    <color name="text_brown">#8B613D</color>
+    <color name="next_button_blue">#0DA5E5</color>
+    <color name="text_green">#368E47</color>
+    <color name="box_green">#8AE197</color>
+</resources>

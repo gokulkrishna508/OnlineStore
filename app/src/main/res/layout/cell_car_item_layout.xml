@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/carCardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="10dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/carImageView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="13dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="fitXY"
+                android:background="@drawable/image_bg"
+                android:src="@drawable/car_img2"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCarName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:padding="3dp"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:layout_marginHorizontal="20dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="@string/mini_cooper_se"
+                app:layout_constraintBottom_toTopOf="@+id/nameBelowBarrier"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/nameBarrier"
+                app:layout_constraintTop_toBottomOf="@+id/carImageView"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/nameBarrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="start"
+                app:constraint_referenced_ids="favouriteIcon"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/favouriteIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/heart_ic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/nameBarrier"
+                app:layout_constraintTop_toBottomOf="@+id/carImageView"
+                android:layout_marginTop="12dp"
+                app:layout_constraintBottom_toTopOf="@+id/nameBelowBarrier"
+                android:layout_marginHorizontal="20dp"/>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/nameBelowBarrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="favouriteIcon,tvCarName"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/carDetailConstrain"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameBelowBarrier">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/gearIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/gear_ic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/gearBarrier"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvGearType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginStart="8dp"
+                    android:textAlignment="viewStart"
+                    android:fontFamily="@font/poppins_medium"
+                    android:padding="3dp"
+                    android:text="@string/manual"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/gearBarrier"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/gearBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="end"
+                    app:constraint_referenced_ids="gearIcon" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/gearGuideLine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="end"
+                    app:constraint_referenced_ids="tvGearType" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/doorIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/door_ic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/gearGuideLine"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_goneMarginStart="40dp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/doorsValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="12dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:padding="3dp"
+                    android:text="@string/_4"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/doorIcon"
+                    app:layout_constraintStart_toEndOf="@+id/doorIcon"
+                    app:layout_constraintTop_toTopOf="@+id/doorIcon" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDoorNumbers"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:padding="3dp"
+                    android:textAlignment="viewStart"
+                    android:text="@string/manual"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/doorsValue"
+                    app:layout_constraintStart_toEndOf="@+id/doorsValue"
+                    app:layout_constraintTop_toTopOf="@+id/doorsValue" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/doorVerticalBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="end"
+                    app:constraint_referenced_ids="tvDoorNumbers" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/seatIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/seat_ic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/doorVerticalBarrier"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_goneMarginStart="40dp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/seatValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="12dp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:padding="2dp"
+                    android:text="@string/_4"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/seatIcon"
+                    app:layout_constraintStart_toEndOf="@+id/seatIcon"
+                    app:layout_constraintTop_toTopOf="@+id/seatIcon" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvSeat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="2dp"
+                    android:layout_marginVertical="12dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:padding="3dp"
+                    android:textAlignment="viewStart"
+                    android:text="@string/seats"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/seatValue"
+
+                    app:layout_constraintStart_toEndOf="@+id/seatValue"
+                    app:layout_constraintTop_toTopOf="@+id/seatValue" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/nameBelowBorderLine"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/underline"
+                android:layout_marginHorizontal="18dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/carDetailConstrain"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constrainAmount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginHorizontal="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameBelowBorderLine">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/amountPerDay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:padding="2dp"
+                    android:text="@string/_260"
+                    android:textColor="@color/light_blue"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvQarPerDay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:padding="2dp"
+                    android:text="@string/qar_day"
+                    android:textColor="@color/light_blue"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/amountPerDay"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/fuelIcon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginVertical="12dp"
+                    android:src="@drawable/fuel_ic"
+                    app:layout_constraintBottom_toBottomOf="@+id/fuelType"
+                    app:layout_constraintTop_toTopOf="@+id/fuelType"
+                    app:layout_constraintEnd_toStartOf="@+id/fuelType" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/fuelType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="12dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:padding="3dp"
+                    android:text="@string/solar"
+                    android:textAlignment="viewStart"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

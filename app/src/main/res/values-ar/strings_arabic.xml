@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="categories">فئات</string>
+    <string name="cars">سيارات</string>
+    <string name="english">إنجليزي</string>
+    <string name="arabic">عربي</string>
+</resources>
