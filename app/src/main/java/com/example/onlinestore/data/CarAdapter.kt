@@ -35,8 +35,8 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
                     .placeholder(R.drawable.car_img2)
                     .into(carImageView)
 
-                tvCarName.text = item.name
-                tvGearType.text = item.gearType
+                tvCarName.text = item.name.second
+                tvGearType.text = item.gearType.toString()
                 doorsValue.text = item.doors.toString()
                 seatValue.text = item.seats.toString()
                 amountPerDay.text = item.rent.toString()

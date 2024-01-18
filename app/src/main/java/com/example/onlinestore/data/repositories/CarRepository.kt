@@ -8,11 +8,12 @@ import org.json.JSONObject
 
 class CarRepository {
 
-    fun apiCall(): ApiResponse {
-        val url = "https://app.salik.qa/api/v1/cars?category_id=2&pickup_date=2023-12-28&pickup_time=6:00%20PM&return_date=2023-12-30&return_time=6:00%20PM&page="
-        var pageNumber = 2
+    fun apiCall(currentPage: Int): ApiResponse {
+        val url = "https://app.salik.qa/api/v1/cars?category_id=2&pickup_date=2023-12-28&pickup_time=6:00%20PM&return_date=2023-12-30&return_time=6:00%20PM"
+        var lastPage = 3
         val client = OkHttpClient()
-        val request = Request.Builder().url(url+pageNumber).get().build()
+        val urlPage = "$url&page=$currentPage"
+        val request = Request.Builder().url(urlPage).get().build()
 
         var code: Int
         var apiResponse: JSONObject? = null
@@ -23,9 +24,9 @@ class CarRepository {
             code = response.code
             message = response.message
             try {
-
                 val responseString = response.body?.string().let { JSONObject(it) }
                 apiResponse = responseString
+                Log.e("@@url", "<<< ${request}")
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.e("@@exception", "<<< ${e.message}")

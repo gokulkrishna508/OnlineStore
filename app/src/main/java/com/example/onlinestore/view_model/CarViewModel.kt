@@ -13,9 +13,9 @@ class CarViewModel(application: Application): AndroidViewModel(application) {
     private val repository: CarRepository = CarRepository()
     val apiResponseStateFlow: MutableStateFlow<JSONObject?> = MutableStateFlow(null)
 
-    fun fetchData(){
+    fun fetchData(currentPage: Int){
         viewModelScope.launch(Dispatchers.IO) {
-            val data = repository.apiCall().response
+            val data = repository.apiCall(currentPage).response
             apiResponseStateFlow.emit(data)
         }
     }

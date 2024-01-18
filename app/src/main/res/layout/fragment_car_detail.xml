@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.ui.CarDetailFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/carBackgroundImageViewClt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/backgroundImageView"
+                android:layout_width="500dp"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                android:src="@drawable/car_img_3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/buttonClt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/backArrowButton"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="66dp"
+                    android:src="@drawable/back_arrow_ic"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/zoomButton"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="66dp"
+                    android:layout_marginEnd="24dp"
+                    android:src="@drawable/zoom_ic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvCars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="66dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="@string/cars"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toStartOf="@+id/zoomButton"
+                    app:layout_constraintStart_toStartOf="@+id/backArrowButton"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/carDetailsClt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-50dp"
+            android:background="@drawable/car_details_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carBackgroundImageViewClt">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/viewPagerIcon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvViewPagerIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:itemCount="4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCarName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="26dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/mini_cooper_se"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/carDetailFavouriteIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewPagerIcon" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/carDetailFavouriteIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:layout_marginEnd="28dp"
+                android:elevation="15dp"
+                android:outlineSpotShadowColor="@color/red_line"
+                android:src="@drawable/heart_icon"
+                app:layout_constraintBottom_toBottomOf="@+id/tvCarName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewPagerIcon" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/carDetailSubConstraint"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="28dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvCarName">
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/tvSimilarCarEndBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="end"
+                    app:constraint_referenced_ids="tvSimilarCars"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvSimilarCars"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/similar_cars"
+                    android:textColor="@color/light_blue"
+                    android:background="@drawable/underline"
+                    android:padding="3dp"
+                    app:layout_constraintBottom_toTopOf="@+id/tvCarDetails"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/similarCarShowIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:padding="3dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/details_show_ic"
+                    app:layout_constraintBottom_toTopOf="@+id/tvCarDetails"
+                    app:layout_constraintStart_toEndOf="@+id/tvSimilarCarEndBarrier"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvSimilarCars"
+                    app:layout_constraintTop_toTopOf="@+id/tvSimilarCars"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvCarDetails"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:padding="3dp"
+                    android:textAlignment="viewStart"
+                    android:layout_marginHorizontal="4dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="@string/lorem_ipsum_dolor_"
+                    app:layout_constraintTop_toBottomOf="@+id/tvSimilarCars"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <View
+                    android:id="@+id/doorSeatAboveLine"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="@color/card_grey_bg"
+                    android:layout_marginTop="19dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvCarDetails"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/doorClt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintEnd_toStartOf="@+id/doorSeatSideVerticalLine"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/doorSeatAboveLine">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/carDetailDoorIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/blue_door_ic"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvIconNameDoor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/door"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toEndOf="@+id/carDetailDoorIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/doorValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="5dp"
+                        android:text="@string/_4"
+                        android:textSize="16sp"
+                        android:layout_marginTop="3dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvIconNameDoor"
+                        app:layout_constraintTop_toBottomOf="@+id/tvIconNameDoor" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvDoors"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="@string/door"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/doorValue"
+                        app:layout_constraintTop_toTopOf="@+id/doorValue" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/doorSeatSideVerticalLine"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="5dp"
+                    android:background="@color/card_grey_bg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/doorSeatAboveLine"
+                    app:layout_constraintBottom_toTopOf="@+id/doorSeatBelowLne"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/seatClt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/doorSeatSideVerticalLine"
+                    app:layout_constraintTop_toBottomOf="@+id/doorSeatAboveLine">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/carSeatDetailDoorIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/blue_seat_ic"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvIconNameSeat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/seats"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toEndOf="@+id/carSeatDetailDoorIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/seatValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="5dp"
+                        android:text="@string/_4"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvIconNameSeat"
+                        app:layout_constraintTop_toBottomOf="@+id/tvIconNameSeat" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvSeats"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="@string/seats"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/seatValue"
+                        app:layout_constraintStart_toEndOf="@+id/seatValue"
+                        app:layout_constraintTop_toTopOf="@+id/seatValue" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/doorSeatBelowLne"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="@color/card_grey_bg"
+                    android:layout_marginTop="19dp"
+                    android:layout_marginVertical="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/doorClt"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/gpsClt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    app:layout_constraintEnd_toStartOf="@+id/gpsBlueToothSideVerticalLine"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/doorSeatBelowLne">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/carDetailGpsIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/blue_gps_ic"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvIconNameGps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/gps"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toEndOf="@+id/carDetailGpsIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/gpsValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:padding="3dp"
+                        android:text="@string/available"
+                        android:textAlignment="viewStart"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvIconNameGps"
+                        app:layout_constraintTop_toBottomOf="@+id/tvIconNameGps" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/gpsBlueToothSideVerticalLine"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="5dp"
+                    android:background="@color/card_grey_bg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/doorSeatBelowLne"
+                    app:layout_constraintBottom_toTopOf="@+id/gpsBlueToothBelowLne"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/blueToothClt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginVertical="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/gpsBlueToothSideVerticalLine"
+                    app:layout_constraintTop_toBottomOf="@+id/doorSeatBelowLne">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/carBlueToothDetailDoorIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/blue_tooth_ic"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvIconNameBlueTooth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/bluetooth"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="12sp"
+
+                        app:layout_constraintStart_toEndOf="@+id/carBlueToothDetailDoorIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/blueToothValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:padding="3dp"
+                        android:text="@string/available"
+                        android:textAlignment="viewStart"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvIconNameBlueTooth"
+                        app:layout_constraintTop_toBottomOf="@+id/tvIconNameBlueTooth" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/gpsBlueToothBelowLne"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="@color/card_grey_bg"
+                    android:layout_marginTop="19dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/gpsClt"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/pricePerDayClt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginVertical="12dp"
+                    app:layout_constraintEnd_toStartOf="@+id/pricePerDayVerticalLine"
+                    app:layout_constraintStart_toEndOf="@+id/gpsBlueToothSideVerticalLine"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/gpsBlueToothBelowLne"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvPricePerDay"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/price_day"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/pricePerDayValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:padding="3dp"
+                        android:text="@string/_4"
+                        android:textAlignment="viewStart"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvPricePerDay"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPricePerDay" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvCarDetailsQARPerDay"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginVertical="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:padding="3dp"
+                        android:text="@string/qar_day"
+                        android:textAlignment="viewStart"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/pricePerDayValue"
+                        app:layout_constraintTop_toBottomOf="@+id/tvPricePerDay" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/pricePerDayVerticalLine"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="5dp"
+                    android:background="@color/card_grey_bg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/gpsBlueToothBelowLne"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/totalPaymentClt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginVertical="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/pricePerDayVerticalLine"
+                    app:layout_constraintTop_toBottomOf="@+id/gpsBlueToothBelowLne">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvTotalPayment"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:text="@string/_07_10_july"
+                        android:textAlignment="viewStart"
+                        android:textColor="@color/dark_grey"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/totalPaymentValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:padding="3dp"
+                        android:text="@string/_1000"
+                        android:textColor="@color/text_red"
+                        android:textAlignment="viewStart"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvTotalPayment"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTotalPayment" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvCarDetailsTotalQAR"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginVertical="5dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:padding="3dp"
+                        android:text="@string/qar"
+                        android:textAlignment="viewStart"
+                        android:textSize="20sp"
+                        android:textColor="@color/text_red"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/totalPaymentValue"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTotalPayment" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/chooseCarButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="28dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/selected_button_bottom_border"
+                android:text="@string/choose_car"
+                android:padding="4dp"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/carDetailSubConstraint"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

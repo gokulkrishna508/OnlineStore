@@ -5,11 +5,24 @@
     <string name="cars">CARS</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
-    <string name="mini_cooper_se"  translatable="false">Mini Cooper SE</string>
-    <string name="manual"  translatable="false">Manual</string>
-    <string name="seats"  translatable="false">Seats</string>
-    <string name="_4"  translatable="false">4</string>
-    <string name="_260"  translatable="false">260</string>
-    <string name="qar_day"  translatable="false">QAR <font size="10">/day</font> </string>
-    <string name="solar"  translatable="false">Solar</string>
+    <string name="mini_cooper_se" translatable="false">Mini Cooper SE</string>
+    <string name="manual" translatable="false">Manual</string>
+    <string name="seats" translatable="false">Seats</string>
+    <string name="_4" translatable="false">4</string>
+    <string name="_260" translatable="false">260</string>
+    <string name="qar_day" translatable="false">QAR<font size="10">/day</font> </string>
+    <string name="solar" translatable="false">Solar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="similar_cars">Similar Cars</string>
+    <string name="lorem_ipsum_dolor_">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna</string>
+    <string name="door">Doors</string>
+    <string name="gps">Gps</string>
+    <string name="bluetooth">BlueTooth</string>
+    <string name="available">Available</string>
+    <string name="price_day">Price/day</string>
+    <string name="qar">QAR</string>
+    <string name="_1000">1000</string>
+    <string name="_07_10_july">07-10 July</string>
+    <string name="choose_car">CHOOSE CAR</string>
 </resources>
