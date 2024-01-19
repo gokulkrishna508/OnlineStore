@@ -1,68 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.ui.HomeFragment">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvCar"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_extra_bold"
-        android:textSize="18sp"
+        android:text="@string/cars"
         android:textAlignment="center"
         android:textColor="@color/text_grey"
-        android:layout_height="wrap_content"
-        android:text="@string/cars"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/languageSwitch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintTop_toBottomOf="@+id/tvCar">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCar">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/mainGuideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"/>
+            app:layout_constraintGuide_percent="0.5" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/englishIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/english"
-            android:padding="5dp"
-            android:textAlignment="center"
-            android:textSize="15sp"
             android:background="@drawable/cardview_bg"
             android:fontFamily="@font/poppins_medium"
-            app:layout_constraintStart_toStartOf="parent"
+            android:padding="5dp"
+            android:text="@string/english"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/mainGuideline"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/arabicIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_medium"
             android:background="@drawable/cardview_bg"
-            android:textAlignment="center"
-            android:text="@string/arabic"
-            android:textSize="15sp"
+            android:fontFamily="@font/poppins_medium"
             android:padding="5dp"
-            app:layout_constraintStart_toEndOf="@id/mainGuideline"
+            android:text="@string/arabic"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toEndOf="@id/mainGuideline"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -74,12 +75,12 @@
         android:layout_marginVertical="20dp"
         android:background="@color/white"
         android:orientation="vertical"
-        tools:itemCount="5"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/languageSwitch"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_default="spread"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/languageSwitch"
+        tools:itemCount="5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

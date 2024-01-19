@@ -10,7 +10,6 @@ class CarRepository {
 
     fun apiCall(currentPage: Int): ApiResponse {
         val url = "https://app.salik.qa/api/v1/cars?category_id=2&pickup_date=2023-12-28&pickup_time=6:00%20PM&return_date=2023-12-30&return_time=6:00%20PM"
-        var lastPage = 3
         val client = OkHttpClient()
         val urlPage = "$url&page=$currentPage"
         val request = Request.Builder().url(urlPage).get().build()

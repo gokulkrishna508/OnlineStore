@@ -1,20 +1,24 @@
 package com.example.onlinestore.view.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.onlinestore.LocalizedApp
 import com.example.onlinestore.data.CarAdapter
 import com.example.onlinestore.data.CarData
 import com.example.onlinestore.databinding.FragmentHomeBinding
 import com.example.onlinestore.view_model.CarViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -24,6 +28,8 @@ class HomeFragment : Fragment() {
     private val carViewModel by viewModels<CarViewModel>()
     private var currentPage = 1
     private var isLoading = false
+    private val localizationDelegate = LocalizationDelegate()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,7 +41,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        LocalizedApp.localeLiveData.observe(viewLifecycleOwner, localizationDelegate)
         loadPage()
         carViewModel.fetchData(currentPage)
         initViews()
@@ -43,17 +49,18 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        initViews()
     }
 
     private fun loadPage() = binding.apply {
 
         viewLifecycleOwner.lifecycleScope.launch {
+
             carViewModel.apiResponseStateFlow.collect { response ->
                 val meta = response?.optJSONObject("response")?.optJSONObject("result")
                     ?.optJSONObject("meta")
                 val apiCurrentPage = meta?.optInt("current_page")
                 val apiLastPage = meta?.optInt("last_page")
-
 
                 rvCarCategory.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -67,40 +74,65 @@ class HomeFragment : Fragment() {
                                 if (apiCurrentPage <= apiLastPage!!) {
                                     isLoading = true
                                     currentPage++
-                                    carViewModel.fetchData(currentPage)
+                                    lifecycleScope.launch {
+                                        delay(2000L)
+                                        carViewModel.fetchData(currentPage)
+                                    }
                                 }
                             }
                         }
-
                     }
                 })
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initViews() = binding.apply {
-        adapter = CarAdapter {}
+        adapter = CarAdapter { carData ->
+            CarDetailFragment.carDataCompanionObject = carData
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCarDetailFragment())
+        }
         carRecyclerView()
+        rvCarCategory.adapter = adapter
+
+        arabicIcon.setOnClickListener {
+            LocalizedApp.updateLocale(LocalizedApp.LOCALE_AR)
+
+            CarAdapter.companionObjectAdapter = "arabic"
+            CarDetailFragment.companionObjectHomeScreen = "arabic"
+            adapter.notifyDataSetChanged()
+        }
+
+        englishIcon.setOnClickListener {
+            LocalizedApp.updateLocale(LocalizedApp.LOCALE_EN)
+            CarAdapter.companionObjectAdapter = "English"
+            CarDetailFragment.companionObjectHomeScreen = "English"
+            adapter.notifyDataSetChanged()
+
+        }
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun carRecyclerView() = binding.apply {
-        var carData: CarData? = null
+        var carData: CarData?
 
         viewLifecycleOwner.lifecycleScope.launch {
 
-
             carViewModel.apiResponseStateFlow.collect { response ->
-                val data = response?.optJSONObject("response")?.optJSONObject("result")
-                    ?.optJSONArray("cars")
+
+                val data = response?.optJSONObject("response")?.optJSONObject("result")?.optJSONArray("cars")
+
+
                 if (data != null) {
 
                     for (i in 0 until data.length()) {
 
                         val getCarJsonObject = data.optJSONObject(i)
                         val brand: Pair<String, String> = Pair(
-                            getCarJsonObject.optString("branch_en"),
-                            getCarJsonObject.optString("branch_ar")
+                            getCarJsonObject.optString("model_en"),
+                            getCarJsonObject.optString("model_ar")
                         )
                         val model: Pair<String, String> = Pair(
                             getCarJsonObject.optString("model_en"),
@@ -124,6 +156,11 @@ class HomeFragment : Fragment() {
                                 ?.optString("name_ar")
                         )
 
+//                        val detailCarImages: Triple<String?, String?, String?> = Triple(
+//                            getCarJsonObject?.optJSONArray("media")?.optInt(1),
+//                            getCarJsonObject?.optJSONArray("media")?.optInt(2),
+//                            getCarJsonObject?.optJSONArray("media")?.optInt(3)
+//                        )
 
                         carData = CarData(
                             id = getCarJsonObject.optInt("id"),
@@ -132,23 +169,36 @@ class HomeFragment : Fragment() {
                             gearType = Pair(transmission.first, transmission.second),
                             doors = getCarJsonObject?.optInt("door_count"),
                             seats = getCarJsonObject?.optInt("seating_capacity"),
-                            rent = getCarJsonObject?.optInt("booking_total_price"),
+                            rent = getCarJsonObject?.optInt("amount_per_day"),
+                            bookingTotalPrice = getCarJsonObject?.optInt("booking_total_price"),
                             fuelType = getCarJsonObject?.optString("fuel_en"),
                             carDetails = Pair(model.first, model.second),
-                            isBlueTooth = Pair(blueTooth.first,blueTooth.second),
-                            isGps = Pair(gps.first,gps.second)
+                            isBlueTooth = Pair(blueTooth.first, blueTooth.second),
+                            isGps = Pair(gps.first, gps.second)
                         )
                         adapter.carList.addAll(listOf(carData))
                         isLoading = false
-                        adapter.notifyDataSetChanged()
-                        Log.d("@@HomeCardata", "$carData")
-                    }
-                    withContext(Dispatchers.Main) {
-                        rvCarCategory.adapter = adapter
                     }
 
+
+                    withContext(Dispatchers.Main) {
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
+        }
+
+    }
+
+    private inner class LocalizationDelegate : Observer<String> {
+        override fun onChanged(value: String) {
+            val layoutDirection = LocalizedApp.getLayoutDirection(value)
+
+            binding.apply {
+                languageSwitch.layoutDirection = layoutDirection
+                rvCarCategory.layoutDirection = layoutDirection
+            }
+
         }
 
     }

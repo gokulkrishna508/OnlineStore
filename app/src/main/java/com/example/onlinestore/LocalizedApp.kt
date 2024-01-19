@@ -10,7 +10,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.MutableLiveData
-import java.util.*
+import java.util.Locale
 
 open class LocalizedApp : Application() {
     companion object {

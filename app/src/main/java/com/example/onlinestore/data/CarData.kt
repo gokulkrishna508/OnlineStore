@@ -11,8 +11,32 @@ data class CarData(
     var fuelType: String?=null,
     var carDetails: Pair<String?,String?> = Pair(null,null),
     var isBlueTooth: Pair<String?,String?> = Pair(null,null),
-    var isGps: Pair<String?,String?> = Pair(null,null)
+    var isGps: Pair<String?,String?> = Pair(null,null),
+    var bookingTotalPrice: Int?= null,
+    var detailCarImages: Triple<String?, String?, String?> = Triple(null,null,null)
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*import okhttp3.OkHttpClient
