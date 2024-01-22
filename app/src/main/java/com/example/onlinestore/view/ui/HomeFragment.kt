@@ -2,6 +2,7 @@ package com.example.onlinestore.view.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.onlinestore.LocalizedApp
 import com.example.onlinestore.data.CarAdapter
 import com.example.onlinestore.data.CarData
+import com.example.onlinestore.data.repositories.BannerViewPagerAdapter
 import com.example.onlinestore.databinding.FragmentHomeBinding
 import com.example.onlinestore.view_model.CarViewModel
 import kotlinx.coroutines.Dispatchers
@@ -91,6 +93,7 @@ class HomeFragment : Fragment() {
     private fun initViews() = binding.apply {
         adapter = CarAdapter { carData ->
             CarDetailFragment.carDataCompanionObject = carData
+            BannerViewPagerAdapter.carDataCompanionObject = carData
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCarDetailFragment())
         }
         carRecyclerView()
@@ -109,7 +112,6 @@ class HomeFragment : Fragment() {
             CarAdapter.companionObjectAdapter = "English"
             CarDetailFragment.companionObjectHomeScreen = "English"
             adapter.notifyDataSetChanged()
-
         }
     }
 
@@ -156,11 +158,11 @@ class HomeFragment : Fragment() {
                                 ?.optString("name_ar")
                         )
 
-//                        val detailCarImages: Triple<String?, String?, String?> = Triple(
-//                            getCarJsonObject?.optJSONArray("media")?.optInt(1),
-//                            getCarJsonObject?.optJSONArray("media")?.optInt(2),
-//                            getCarJsonObject?.optJSONArray("media")?.optInt(3)
-//                        )
+                        val detailCarImages: Triple<String?, String?, String?> = Triple(
+                            getCarJsonObject?.optJSONArray("media")?.optString(1),
+                            getCarJsonObject?.optJSONArray("media")?.optString(2),
+                            getCarJsonObject?.optJSONArray("media")?.optString(3)
+                        )
 
                         carData = CarData(
                             id = getCarJsonObject.optInt("id"),
@@ -174,9 +176,11 @@ class HomeFragment : Fragment() {
                             fuelType = getCarJsonObject?.optString("fuel_en"),
                             carDetails = Pair(model.first, model.second),
                             isBlueTooth = Pair(blueTooth.first, blueTooth.second),
-                            isGps = Pair(gps.first, gps.second)
+                            isGps = Pair(gps.first, gps.second),
+                            detailCarImages = Triple(detailCarImages.first,detailCarImages.second,detailCarImages.third)
                         )
                         adapter.carList.addAll(listOf(carData))
+                        Log.e("@@carImage", "$carData" )
                         isLoading = false
                     }
 

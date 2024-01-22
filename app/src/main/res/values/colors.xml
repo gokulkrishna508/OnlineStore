@@ -6,6 +6,7 @@
     <color name="under_line">#D8D8D8</color>
     <color name="box_border_grey">#EBEBEB</color>
     <color name="text_grey">#8E8E8E</color>
+    <color name="view_pager_circle_color">#C8D5E2</color>
     <color name="light_grey_bg_cv">#f6f6f6</color>
     <color name="card_grey_bg">#E3E3E3</color>
     <color name="dark_grey">#343434</color>

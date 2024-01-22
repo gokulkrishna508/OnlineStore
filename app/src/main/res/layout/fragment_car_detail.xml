@@ -12,19 +12,18 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/carBackgroundImageViewClt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/backgroundImageView"
-                android:layout_width="500dp"
-                android:layout_height="wrap_content"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/bannerViewPager"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/car_img_3"
-                android:layout_marginTop="-20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
