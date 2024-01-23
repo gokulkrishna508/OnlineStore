@@ -1,45 +1,56 @@
 package com.example.onlinestore.data
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.onlinestore.R
 import com.example.onlinestore.databinding.CellCarItemLayoutBinding
 import com.example.onlinestore.databinding.CellProgressBarLayoutBinding
+import kotlinx.coroutines.Delay
+import okhttp3.internal.notify
 
-class CarAdapter(private val onItemClick: (item: CarData) -> Unit) :
-    RecyclerView.Adapter<CarAdapter.ViewHolder>() {
+class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var carList: MutableList<CarData?> = mutableListOf()
+    var onItemPass: ((item2: View)-> Unit)?= null
     var isLoading = false
+    var selectedItemPosition: Int = RecyclerView.NO_POSITION
+
     companion object {
         var companionObjectAdapter: String? = null
+        const val DATA_VIEW = 0
+        const val LOADER_VIEW = 1
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = CellCarItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         val progressView = CellProgressBarLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return if(viewType==1){
-             ViewHolder(view)
-        }else{
-            ViewHolder(view)
+        return when(viewType){
+            DATA_VIEW -> DataViewHolder(view)
+            LOADER_VIEW -> ProgressViewHolder(progressView)
+
+            else->throw IllegalArgumentException("Invalid Item Type")
         }
 
     }
 
-    override fun onBindViewHolder(holder: CarAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = carList[position]
+       return when(item?.viewType){
+           DATA_VIEW -> (holder as DataViewHolder).bind(item)
+           LOADER_VIEW -> (holder as ProgressViewHolder).progressBind()
 
-        if (item != null) {
-            holder.bind(item)
-        }
+           else -> throw IllegalArgumentException("Invalid Data View")
+       }
     }
 
     override fun getItemCount(): Int {
         return carList.size
     }
 
-    inner class ViewHolder(private val itemLayoutBinding: CellCarItemLayoutBinding) :
+     inner class DataViewHolder(private val itemLayoutBinding: CellCarItemLayoutBinding) :
         RecyclerView.ViewHolder(itemLayoutBinding.root) {
         fun bind(item: CarData) {
             itemLayoutBinding.apply {
@@ -81,7 +92,8 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) :
                             isGps = item.gearType,
                             bookingTotalPrice = item.bookingTotalPrice,
                             detailCarImages = item.detailCarImages,
-                            carImage = item.carImage
+                            carImage = item.carImage,
+                            viewType = item.viewType
                         )
                     )
                 }
@@ -89,21 +101,17 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) :
         }
     }
 
-    inner class progressViewHolder(val progressItemLayoutBinding: CellProgressBarLayoutBinding) : RecyclerView.ViewHolder(progressItemLayoutBinding.root) {
-        fun progressBind(item: CarData){
+    inner class ProgressViewHolder(val progressItemLayoutBinding: CellProgressBarLayoutBinding) : RecyclerView.ViewHolder(progressItemLayoutBinding.root) {
+        fun progressBind(){
             progressItemLayoutBinding.apply {
-                progressBar.progress= item.progressBar!!
+                onItemPass?.invoke(progressBar)
+                progressBar.progress
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(carList[position]){
-            is CarData -> 0
-            else -> 1
-
-        }
-
+        return carList[position]?.viewType!!
     }
 
 }

@@ -11,11 +11,17 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_carDetailFragment"
-            app:destination="@id/carDetailFragment" />
+            app:destination="@id/carDetailFragment"
+            app:popUpTo="@+id/carDetailFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/carDetailFragment"
         android:name="com.example.onlinestore.view.ui.CarDetailFragment"
         android:label="fragment_car_detail"
-        tools:layout="@layout/fragment_car_detail" />
+        tools:layout="@layout/fragment_car_detail" >
+        <action
+            android:id="@+id/action_carDetailFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

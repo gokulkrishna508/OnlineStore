@@ -14,7 +14,7 @@ data class CarData(
     var isGps: Pair<String?,String?> = Pair(null,null),
     var bookingTotalPrice: Int?= null,
     var detailCarImages: Triple<String?, String?, String?> = Triple(null,null,null),
-    var progressBar: Int?=null
+    var viewType: Int?=null
 )
 
 

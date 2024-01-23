@@ -7,9 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.bumptech.glide.Glide
-import com.example.onlinestore.R
 import com.example.onlinestore.data.CarData
 import com.example.onlinestore.data.repositories.BannerViewPagerAdapter
 import com.example.onlinestore.databinding.FragmentCarDetailBinding
@@ -58,6 +57,10 @@ class CarDetailFragment : Fragment() {
             pricePerDayValue.text = carDataCompanionObject?.rent?.toString()
             totalPaymentValue.text = carDataCompanionObject?.bookingTotalPrice?.toString()
         }
+
+        carDetailFavouriteIcon.setOnClickListener {
+           findNavController().popBackStack()
+        }
     }
 
     @SuppressLint("SuspiciousIndentation")
@@ -79,6 +82,7 @@ class CarDetailFragment : Fragment() {
                     position: Int,
                     positionOffset: Float,
                     positionOffsetPixels: Int
+
                 ) {
                     super.onPageScrolled(position, positionOffset, positionOffsetPixels)
                 }
