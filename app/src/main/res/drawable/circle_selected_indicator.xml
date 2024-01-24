@@ -3,5 +3,5 @@
     android:shape="oval" android:useLevel="true"
     android:dither="true">
     <size android:height="12dp" android:width="12dp"/>
-    <solid android:color="@color/view_pager_circle_color"/>
+    <solid android:color="@color/next_button_blue"/>
 </shape>

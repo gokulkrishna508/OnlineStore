@@ -36,6 +36,10 @@ class HomeFragment : Fragment() {
     private var carData: CarData? = null
     var loadDataView: Int?= null
 
+    companion object{
+        var positionInvoke: Int?=null
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
@@ -183,7 +187,13 @@ class HomeFragment : Fragment() {
                                 ?.optString("name_ar")
                         )
 
-                        val detailCarImages: Triple<String?, String?, String?> = Triple(
+//                        val detailCarImages: Triple<String?, String?, String?> = Triple(
+//                            getCarJsonObject?.optJSONArray("media")?.optString(1),
+//                            getCarJsonObject?.optJSONArray("media")?.optString(2),
+//                            getCarJsonObject?.optJSONArray("media")?.optString(3)
+//                        )
+
+                        val detailCarImages: MutableList<String?> = mutableListOf(
                             getCarJsonObject?.optJSONArray("media")?.optString(1),
                             getCarJsonObject?.optJSONArray("media")?.optString(2),
                             getCarJsonObject?.optJSONArray("media")?.optString(3)
@@ -215,7 +225,8 @@ class HomeFragment : Fragment() {
                             carDetails = Pair(model.first, model.second),
                             isBlueTooth = Pair(blueTooth.first, blueTooth.second),
                             isGps = Pair(gps.first, gps.second),
-                            detailCarImages = Triple(detailCarImages.first,detailCarImages.second,detailCarImages.third),
+//                            detailCarImages = Triple(detailCarImages.first,detailCarImages.second,detailCarImages.third),
+                            detailCarImages = detailCarImages,
                             viewType = loadDataView
                         )
                         adapter.carList.addAll(listOf(carData))
