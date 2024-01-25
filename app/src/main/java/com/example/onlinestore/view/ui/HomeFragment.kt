@@ -34,13 +34,17 @@ class HomeFragment : Fragment() {
     private var isLoading = false
     private val localizationDelegate = LocalizationDelegate()
     private var carData: CarData? = null
-    var loadDataView: Int?= null
+    var loadDataView: Int? = null
 
-    companion object{
-        var positionInvoke: Int?=null
+    companion object {
+        var positionInvoke: Int? = null
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -58,7 +62,6 @@ class HomeFragment : Fragment() {
         super.onResume()
         initViews()
     }
-
 
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -118,8 +121,8 @@ class HomeFragment : Fragment() {
     private fun initViews() = binding.apply {
         adapter = CarAdapter { onClickCarData ->
             CarDetailFragment.carDataCompanionObject = onClickCarData
-                BannerViewPagerAdapter.carDataCompanionObject = onClickCarData
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCarDetailFragment())
+            BannerViewPagerAdapter.carDataCompanionObject = onClickCarData
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCarDetailFragment())
 
         }
         carRecyclerView()
@@ -148,12 +151,13 @@ class HomeFragment : Fragment() {
 
             carViewModel.apiResponseStateFlow.collect { response ->
 
-                    if(currentPage >= 1 && adapter.carList.isNotEmpty()){
-                        adapter.carList.removeAt(adapter.carList.lastIndex)
-                        adapter.notifyDataSetChanged()
-                    }
+                if (currentPage >= 1 && adapter.carList.isNotEmpty()) {
+                    adapter.carList.removeAt(adapter.carList.lastIndex)
+                    adapter.notifyDataSetChanged()
+                }
 
-                val data = response?.optJSONObject("response")?.optJSONObject("result")?.optJSONArray("cars")
+                val data = response?.optJSONObject("response")?.optJSONObject("result")
+                    ?.optJSONArray("cars")
 
 
                 if (data != null) {
@@ -161,6 +165,7 @@ class HomeFragment : Fragment() {
                     for (i in 0 until data.length()) {
 
                         val getCarJsonObject = data.optJSONObject(i)
+
                         val brand: Pair<String, String> = Pair(
                             getCarJsonObject.optString("model_en"),
                             getCarJsonObject.optString("model_ar")
@@ -186,57 +191,65 @@ class HomeFragment : Fragment() {
                             getCarJsonObject?.optJSONArray("facilities")?.optJSONObject(1)
                                 ?.optString("name_ar")
                         )
-
-//                        val detailCarImages: Triple<String?, String?, String?> = Triple(
-//                            getCarJsonObject?.optJSONArray("media")?.optString(1),
-//                            getCarJsonObject?.optJSONArray("media")?.optString(2),
-//                            getCarJsonObject?.optJSONArray("media")?.optString(3)
-//                        )
-
+/*
                         val detailCarImages: MutableList<String?> = mutableListOf(
+                            getCarJsonObject?.optJSONArray("media")?.optString(0),
                             getCarJsonObject?.optJSONArray("media")?.optString(1),
                             getCarJsonObject?.optJSONArray("media")?.optString(2),
-                            getCarJsonObject?.optJSONArray("media")?.optString(3)
-                        )
+                            getCarJsonObject?.optJSONArray("media")?.optString(3),
+                            getCarJsonObject?.optJSONArray("media")?.optString(4)
+                        )*/
 
-                       loadDataView = DATA_VIEW
-                        /*adapter.onItemPass={
-                            it.hide()
-                       }
+                        loadDataView = DATA_VIEW
 
-                        if(isLoading){
-                            loadDataView = LOADER_VIEW
-                            adapter.onItemPass = {
-                                it.visible()
+                        val getDetailImageArray = getCarJsonObject.optJSONArray("media")
+                        val detailCarImages = mutableListOf<String?>()
+
+                        if (getDetailImageArray != null) {
+                            for (j in 0 until getDetailImageArray.length()) {
+                                val image = getDetailImageArray.getString(j)
+                                detailCarImages.add(image)
                             }
-                        }*/
+                        }
+
+                                /*adapter.onItemPass={
+                                    it.hide()
+                               }
+
+                                if(isLoading){
+                                    loadDataView = LOADER_VIEW
+                                    adapter.onItemPass = {
+                                        it.visible()
+                                    }
+                                }*/
 
 
-                        carData = CarData(
-                            id = getCarJsonObject.optInt("id"),
-                            name = Pair(brand.first, brand.second),
-                            carImage = getCarJsonObject?.optString("cover_media"),
-                            gearType = Pair(transmission.first, transmission.second),
-                            doors = getCarJsonObject?.optInt("door_count"),
-                            seats = getCarJsonObject?.optInt("seating_capacity"),
-                            rent = getCarJsonObject?.optInt("amount_per_day"),
-                            bookingTotalPrice = getCarJsonObject?.optInt("booking_total_price"),
-                            fuelType = getCarJsonObject?.optString("fuel_en"),
-                            carDetails = Pair(model.first, model.second),
-                            isBlueTooth = Pair(blueTooth.first, blueTooth.second),
-                            isGps = Pair(gps.first, gps.second),
+                                carData = CarData(
+                                    id = getCarJsonObject.optInt("id"),
+                                    name = Pair(brand.first, brand.second),
+                                    carImage = getCarJsonObject?.optString("cover_media"),
+                                    gearType = Pair(transmission.first, transmission.second),
+                                    doors = getCarJsonObject?.optInt("door_count"),
+                                    seats = getCarJsonObject?.optInt("seating_capacity"),
+                                    rent = getCarJsonObject?.optInt("amount_per_day"),
+                                    bookingTotalPrice = getCarJsonObject?.optInt("booking_total_price"),
+                                    fuelType = getCarJsonObject?.optString("fuel_en"),
+                                    carDetails = Pair(model.first, model.second),
+                                    isBlueTooth = Pair(blueTooth.first, blueTooth.second),
+                                    isGps = Pair(gps.first, gps.second),
 //                            detailCarImages = Triple(detailCarImages.first,detailCarImages.second,detailCarImages.third),
-                            detailCarImages = detailCarImages,
-                            viewType = loadDataView
-                        )
-                        adapter.carList.addAll(listOf(carData))
-                        isLoading = false
-                    }
+                                    detailCarImages = detailCarImages,
+                                    viewType = loadDataView
+                                )
+                                adapter.carList.addAll(listOf(carData))
+                                isLoading = false
+                            }
 
-                    withContext(Dispatchers.Main) {
-                        adapter.notifyDataSetChanged()
-                    }
-                }
+                            withContext(Dispatchers.Main) {
+                                adapter.notifyDataSetChanged()
+                            }
+
+                        }
             }
         }
 
@@ -256,10 +269,10 @@ class HomeFragment : Fragment() {
     }
 }
 
-fun View.visible(){
+fun View.visible() {
     this.visibility = View.VISIBLE
 }
 
-fun View.hide(){
+fun View.hide() {
     this.visibility = View.GONE
 }

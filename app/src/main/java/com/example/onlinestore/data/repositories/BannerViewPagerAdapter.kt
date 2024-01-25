@@ -2,7 +2,9 @@ package com.example.onlinestore.data.repositories
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.onlinestore.R
@@ -10,7 +12,7 @@ import com.example.onlinestore.data.CarData
 import com.example.onlinestore.databinding.CellViewPagerImageViewBinding
 import com.example.onlinestore.view.ui.HomeFragment
 
-class BannerViewPagerAdapter(val onItemClick: ((item: CarData) -> Unit)) : RecyclerView.Adapter<BannerViewPagerAdapter.ViewHolder>() {
+class BannerViewPagerAdapter(val onItemClick: ((item: CarData) -> Unit)?=null) : RecyclerView.Adapter<BannerViewPagerAdapter.ViewHolder>() {
 
     var bannerImageList: MutableList<String>? = mutableListOf()
     companion object {
@@ -40,6 +42,13 @@ class BannerViewPagerAdapter(val onItemClick: ((item: CarData) -> Unit)) : Recyc
                 Glide.with(bannerImageView).load(item)
                     .placeholder(R.drawable.car_img2).into(bannerImageView)
             }
+
+            onItemClick?.invoke(
+                CarData(
+                detailCarImages = carDataCompanionObject?.detailCarImages
+            )
+            )
+
         }
     }
 

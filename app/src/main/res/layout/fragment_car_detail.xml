@@ -4,11 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".view.ui.CarDetailFragment">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/detailSubClt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/carBackgroundImageViewClt"
@@ -21,8 +40,8 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/bannerViewPager"
                 android:layout_width="0dp"
-                android:layout_height="200dp"
-                android:scaleType="fitXY"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop"
                 android:src="@drawable/car_img_3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +84,7 @@
                 android:layout_marginTop="36dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="@string/cars"
-                android:textColor="@color/black"
+                android:textColor="@color/text_grey"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toStartOf="@+id/zoomButton"
                 app:layout_constraintStart_toStartOf="@+id/backArrowButton"
@@ -73,16 +92,23 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cvCarDetails"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/CustomCardViewStyle"
+            android:layout_marginTop="-50dp"
+            app:cardElevation="15dp"
+            app:cardBackgroundColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carBackgroundImageViewClt">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/carDetailsClt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-50dp"
-            android:background="@drawable/car_details_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/carBackgroundImageViewClt">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/viewPagerIcon"
@@ -138,7 +164,7 @@
                 android:layout_marginEnd="28dp"
                 android:elevation="15dp"
                 android:outlineSpotShadowColor="@color/red_line"
-                android:src="@drawable/heart_icon"
+                android:src="@drawable/heart_ic"
                 app:layout_constraintBottom_toBottomOf="@+id/tvCarName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/viewPagerIcon" />
@@ -153,12 +179,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvCarName">
 
-                <androidx.constraintlayout.widget.Barrier
+                <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/tvSimilarCarEndBarrier"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:barrierDirection="end"
-                    app:constraint_referenced_ids="tvSimilarCars"/>
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.3"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvSimilarCars"
@@ -194,7 +220,7 @@
                     android:textAlignment="viewStart"
                     android:layout_marginHorizontal="4dp"
                     android:lineSpacingExtra="3dp"
-                    android:text="@string/lorem_ipsum_dolor_"
+                    tools:text="@string/lorem_ipsum_dolor_"
                     app:layout_constraintTop_toBottomOf="@+id/tvSimilarCars"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
@@ -244,24 +270,22 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:text="@string/_4"
+                        tools:text="@string/_4"
                         android:textSize="16sp"
-                        android:layout_marginTop="3dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tvIconNameDoor"
                         app:layout_constraintTop_toBottomOf="@+id/tvIconNameDoor" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvDoors"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="3dp"
-                        android:text="@string/door"
+                        android:text="@string/seats"
                         android:textAlignment="viewStart"
                         android:textColor="@color/dark_grey"
                         android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/doorValue"
                         app:layout_constraintStart_toEndOf="@+id/doorValue"
                         app:layout_constraintTop_toTopOf="@+id/doorValue" />
 
@@ -313,7 +337,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:text="@string/_4"
+                        tools:text="@string/_4"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tvIconNameSeat"
@@ -382,7 +406,7 @@
                         android:layout_marginVertical="5dp"
                         android:fontFamily="@font/poppins_medium"
                         android:padding="3dp"
-                        android:text="@string/available"
+                        tools:text="@string/available"
                         android:textAlignment="viewStart"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -441,7 +465,7 @@
                         android:layout_marginVertical="5dp"
                         android:fontFamily="@font/poppins_medium"
                         android:padding="3dp"
-                        android:text="@string/available"
+                        tools:text="@string/available"
                         android:textAlignment="viewStart"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -467,11 +491,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
                     android:layout_marginVertical="12dp"
+
+
                     app:layout_constraintEnd_toStartOf="@+id/pricePerDayVerticalLine"
-                    app:layout_constraintStart_toEndOf="@+id/gpsBlueToothSideVerticalLine"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/gpsBlueToothBelowLne"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    app:layout_constraintTop_toBottomOf="@+id/gpsBlueToothBelowLne">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvPricePerDay"
@@ -493,7 +517,7 @@
                         android:layout_marginVertical="5dp"
                         android:fontFamily="@font/poppins_medium"
                         android:padding="3dp"
-                        android:text="@string/_4"
+                        tools:text="@string/_4"
                         android:textAlignment="viewStart"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -527,7 +551,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/gpsBlueToothBelowLne"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="@+id/pricePerDayBottomBarrier"/>
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/pricePerDayBottomBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="totalPaymentClt"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/totalPaymentClt"
@@ -559,7 +590,7 @@
                         android:layout_marginVertical="5dp"
                         android:fontFamily="@font/poppins_medium"
                         android:padding="3dp"
-                        android:text="@string/_1000"
+                        tools:text="@string/_1000"
                         android:textColor="@color/text_red"
                         android:textAlignment="viewStart"
                         android:textSize="20sp"
@@ -603,6 +634,10 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/carDetailSubConstraint"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

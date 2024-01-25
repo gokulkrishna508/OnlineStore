@@ -12,20 +12,20 @@
       android:pathData="M9.742,5.247 L5.247,5.248 5.248,9.742"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="@color/black"/>
+      android:strokeColor="@color/text_grey"/>
   <path
       android:pathData="M14,18.495 L18.495,18.494 18.495,14"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="@color/black"/>
+      android:strokeColor="@color/text_grey"/>
   <path
       android:pathData="M14,5.247 L18.496,5.248 18.495,9.741"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="@color/black"/>
+      android:strokeColor="@color/text_grey"/>
   <path
       android:pathData="M9.742,18.494 L5.246,18.493 5.247,14"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="@color/black"/>
+      android:strokeColor="@color/text_grey"/>
 </vector>

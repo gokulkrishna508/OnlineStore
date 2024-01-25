@@ -6,11 +6,11 @@
   <path
       android:pathData="M5,0L19,0A5,5 0,0 1,24 5L24,19A5,5 0,0 1,19 24L5,24A5,5 0,0 1,0 19L0,5A5,5 0,0 1,5 0z"
       android:strokeAlpha="0.16"
-      android:fillColor="#f3f8fb"
+      android:fillColor="@color/light_grey_bg_cv"
       android:fillAlpha="0.16"/>
   <path
       android:pathData="M14.85,5.728l-6.112,6.113 6.112,6.11"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="@color/black"/>
+      android:strokeColor="@color/text_grey"/>
 </vector>
