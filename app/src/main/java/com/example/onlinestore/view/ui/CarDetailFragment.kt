@@ -107,28 +107,27 @@ class CarDetailFragment : Fragment() {
     fun bannerImageView() = binding.apply {
 
         val carData: CarData? = carDataCompanionObject?.detailCarImages?.let { CarData(detailCarImages = it) }
-        Log.d("@@userViewPageImage", "${carData}")
+        Log.d("@@userViewPageImage", "$carData")
         viewPagerAdapter.bannerImageList = carData?.detailCarImages?.map { it.toString() }?.toMutableList()?: mutableListOf()
 
         bannerViewPager.adapter= viewPagerAdapter
         bannerViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
         dotsCount = viewPagerAdapter.itemCount
-        Log.e("dotsCount","<<<< $dotsCount")
 
+        if(dotAdapter.dotList.isEmpty()){
+            for (i in 0 until dotsCount){
+                dotAdapter.dotList.addAll(mutableListOf(Dots(i,false)))
+            }
 
-        for (i in 0 until dotsCount){
-            dotAdapter.dotList.addAll(mutableListOf(Dots(i,false)))
-            Log.d("@@checkCount", "$dotsCount ")
+            val currentItem = bannerViewPager.currentItem
+            dotAdapter.dotList[currentItem].isSelected = true
         }
 
-        val currentItem = bannerViewPager.currentItem
-        dotAdapter.dotList[currentItem].isSelected = true
-
-
-      //  createDotIndicator(dotsCount)
+//        createDotIndicator(dotsCount)
 
         bannerViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
 
@@ -145,7 +144,10 @@ class CarDetailFragment : Fragment() {
                 if(dotAdapter.dotList[position].isSelected ){
                     val getCurrentViewImage = viewPagerAdapter.bannerImageList!![position]
                     Log.e("@@currentItem", getCurrentViewImage)
+                    ZoomImageFragment.zoomImageCompanionObject=getCurrentViewImage
                 }
+
+//                updateDotIndicator(position)
             }
 
 

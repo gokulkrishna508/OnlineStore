@@ -3,14 +3,11 @@ package com.example.onlinestore.data
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.onlinestore.R
 import com.example.onlinestore.databinding.CellCarItemLayoutBinding
 import com.example.onlinestore.databinding.CellProgressBarLayoutBinding
-import kotlinx.coroutines.Delay
-import okhttp3.internal.notify
 
 class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var carList: MutableList<CarData?> = mutableListOf()
@@ -38,7 +35,7 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = carList[position]
-       return when(item?.viewType){
+        return when(item?.viewType){
            DATA_VIEW -> (holder as DataViewHolder).bind(item)
            LOADER_VIEW -> (holder as ProgressViewHolder).progressBind()
 

@@ -13,7 +13,6 @@ data class CarData(
     var isBlueTooth: Pair<String?,String?> = Pair(null,null),
     var isGps: Pair<String?,String?> = Pair(null,null),
     var bookingTotalPrice: Int?= null,
-//    var detailCarImages: Triple<String?, String?, String?> = Triple(null,null,null),
     var detailCarImages: MutableList<String?> ?=null,
     var viewType: Int?=null,
 )
