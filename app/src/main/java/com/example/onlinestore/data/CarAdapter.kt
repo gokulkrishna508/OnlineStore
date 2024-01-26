@@ -12,8 +12,8 @@ import com.example.onlinestore.databinding.CellProgressBarLayoutBinding
 class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var carList: MutableList<CarData?> = mutableListOf()
     var onItemPass: ((item2: View)-> Unit)?= null
-    var isLoading = false
-    var selectedItemPosition: Int = RecyclerView.NO_POSITION
+//    var isLoading = false
+//    var selectedItemPosition: Int = RecyclerView.NO_POSITION
 
     companion object {
         var companionObjectAdapter: String? = null
@@ -98,7 +98,7 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
         }
     }
 
-    inner class ProgressViewHolder(val progressItemLayoutBinding: CellProgressBarLayoutBinding) : RecyclerView.ViewHolder(progressItemLayoutBinding.root) {
+    inner class ProgressViewHolder(private val progressItemLayoutBinding: CellProgressBarLayoutBinding) : RecyclerView.ViewHolder(progressItemLayoutBinding.root) {
         fun progressBind(){
             progressItemLayoutBinding.apply {
                 onItemPass?.invoke(progressBar)

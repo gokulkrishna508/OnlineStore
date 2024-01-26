@@ -24,13 +24,24 @@
             android:background="@color/white">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/downloadButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="25dp"
+                android:tint="@color/red_line"
+                android:src="@drawable/download_arrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/carImageView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="13dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/downloadButton"
                 android:scaleType="fitXY"
                 android:background="@drawable/image_bg"
                 android:src="@drawable/car_img2"/>

@@ -147,7 +147,6 @@ class CarDetailFragment : Fragment() {
                     ZoomImageFragment.zoomImageCompanionObject=getCurrentViewImage
                 }
 
-//                updateDotIndicator(position)
             }
 
 

@@ -43,7 +43,6 @@ class ZoomImageFragment : Fragment() {
                 matrix.set(updatedMatrix)
                 binding.zoomImageViewer.imageMatrix = matrix
             }
-
         }
         zoomImage()
 
