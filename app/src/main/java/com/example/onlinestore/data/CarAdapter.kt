@@ -12,6 +12,7 @@ import com.example.onlinestore.databinding.CellProgressBarLayoutBinding
 class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var carList: MutableList<CarData?> = mutableListOf()
     var onItemPass: ((item2: View)-> Unit)?= null
+    var onDownloadImage: ((position: String)->Unit)?=null
 //    var isLoading = false
 //    var selectedItemPosition: Int = RecyclerView.NO_POSITION
 
@@ -74,7 +75,7 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
                 }
 
 
-                root.setOnClickListener {
+                cellCarDataClt.setOnClickListener {
                     onItemClick.invoke(
                         CarData(
                             id = item.id,
@@ -94,6 +95,10 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
                         )
                     )
                 }
+
+                downloadButton.setOnClickListener {
+                    item.carImage?.let { onDownloadImage?.invoke( it) }
+                }
             }
         }
     }
@@ -106,6 +111,7 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
             }
         }
     }
+
 
     override fun getItemViewType(position: Int): Int {
         return carList[position]?.viewType!!

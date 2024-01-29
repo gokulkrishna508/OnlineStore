@@ -1,11 +1,23 @@
 package com.example.onlinestore.view.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.icu.text.Transliterator.Position
+import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.DownloadManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.database.Cursor
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -25,6 +37,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.util.Calendar
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -35,16 +49,21 @@ class HomeFragment : Fragment() {
     private val localizationDelegate = LocalizationDelegate()
     private var carData: CarData? = null
     var loadDataView: Int? = null
+    private var msg: String? = ""
+    private var lastMsg = ""
+
+    private var imageUrl: String? =null
+    private val now = Calendar.getInstance()
+    private val currentYear: Int = now.get(Calendar.YEAR)
+    private val currentMonth: Int = now.get(Calendar.MONTH)
+    private val currentDay: Int = now.get(Calendar.DAY_OF_MONTH)
 
     companion object {
         var positionInvoke: Int? = null
+        private const val MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -68,6 +87,66 @@ class HomeFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         loadPage()
         binding.rvCarCategory.smoothScrollToPosition(currentPage)
+    }
+
+
+    @SuppressLint("Range")
+    private fun downloadImage(url: String) {
+        val directory = File(Environment.DIRECTORY_PICTURES)
+
+        if (!directory.exists()) { directory.mkdirs() }
+
+        val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+        val downloadUri = Uri.parse(url)
+
+        val request = DownloadManager.Request(downloadUri).apply {
+            setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(false)
+                .setTitle(url.substring(url.lastIndexOf("/") + 1))
+                .setDescription("")
+                .setDestinationInExternalPublicDir(
+                    directory.toString(),
+                    url.substring(url.lastIndexOf("/") + 1)
+                )
+        }
+
+        val downloadId = downloadManager.enqueue(request)
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        Thread{
+            var downloading = true
+            while (downloading) {
+                val cursor:     Cursor = downloadManager.query(query)
+                cursor.moveToFirst()
+                if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                    downloading = false
+                }
+                val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                msg = statusMessage(url, directory, status)
+                if (msg != lastMsg) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        toast(msg!!)
+                    }
+                    lastMsg = msg ?: ""
+                }
+                cursor.close()
+            }
+        }.start()
+    }
+
+    private fun statusMessage(url: String, directory: File, status: Int): String {
+        var msg = ""
+        msg = when (status) {
+            DownloadManager.STATUS_FAILED -> "Download has been failed, please try again"
+            DownloadManager.STATUS_PAUSED -> "Paused"
+            DownloadManager.STATUS_PENDING -> "Pending"
+            DownloadManager.STATUS_RUNNING -> "Downloading..."
+            DownloadManager.STATUS_SUCCESSFUL -> "Image downloaded successfully in $directory" + File.separator + url.substring(
+                url.lastIndexOf("/") + 1
+            )
+            else -> "There's nothing to download"
+        }
+        return msg
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -99,7 +178,6 @@ class HomeFragment : Fragment() {
                                 if (apiCurrentPage < (apiLastPage ?: 0)) {
 
                                     isLoading = true
-
                                     adapter.carList.add(CarData(viewType = LOADER_VIEW))
                                     adapter.notifyDataSetChanged()
                                     currentPage++
@@ -117,7 +195,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "SuspiciousIndentation")
     private fun initViews() = binding.apply {
         adapter = CarAdapter { onClickCarData ->
             CarDetailFragment.carDataCompanionObject = onClickCarData
@@ -140,6 +218,14 @@ class HomeFragment : Fragment() {
             CarAdapter.companionObjectAdapter = "English"
             CarDetailFragment.companionObjectHomeScreen = "English"
             adapter.notifyDataSetChanged()
+        }
+
+        adapter.onDownloadImage = { position ->
+            imageUrl = position
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Build.VERSION.SDK_INT >= 29) {
+                    askPermissions()
+                }
+                else alertBox()
         }
     }
 
@@ -191,14 +277,14 @@ class HomeFragment : Fragment() {
                             getCarJsonObject?.optJSONArray("facilities")?.optJSONObject(1)
                                 ?.optString("name_ar")
                         )
-/*
-                        val detailCarImages: MutableList<String?> = mutableListOf(
-                            getCarJsonObject?.optJSONArray("media")?.optString(0),
-                            getCarJsonObject?.optJSONArray("media")?.optString(1),
-                            getCarJsonObject?.optJSONArray("media")?.optString(2),
-                            getCarJsonObject?.optJSONArray("media")?.optString(3),
-                            getCarJsonObject?.optJSONArray("media")?.optString(4)
-                        )*/
+                        /*
+                                                val detailCarImages: MutableList<String?> = mutableListOf(
+                                                    getCarJsonObject?.optJSONArray("media")?.optString(0),
+                                                    getCarJsonObject?.optJSONArray("media")?.optString(1),
+                                                    getCarJsonObject?.optJSONArray("media")?.optString(2),
+                                                    getCarJsonObject?.optJSONArray("media")?.optString(3),
+                                                    getCarJsonObject?.optJSONArray("media")?.optString(4)
+                                                )*/
 
                         loadDataView = DATA_VIEW
 
@@ -212,44 +298,44 @@ class HomeFragment : Fragment() {
                             }
                         }
 
-                                /*adapter.onItemPass={
-                                    it.hide()
-                               }
+                        /*adapter.onItemPass={
+                            it.hide()
+                       }
 
-                                if(isLoading){
-                                    loadDataView = LOADER_VIEW
-                                    adapter.onItemPass = {
-                                        it.visible()
-                                    }
-                                }*/
+                        if(isLoading){
+                            loadDataView = LOADER_VIEW
+                            adapter.onItemPass = {
+                                it.visible()
+                            }
+                        }*/
 
 
-                                carData = CarData(
-                                    id = getCarJsonObject.optInt("id"),
-                                    name = Pair(brand.first, brand.second),
-                                    carImage = getCarJsonObject?.optString("cover_media"),
-                                    gearType = Pair(transmission.first, transmission.second),
-                                    doors = getCarJsonObject?.optInt("door_count"),
-                                    seats = getCarJsonObject?.optInt("seating_capacity"),
-                                    rent = getCarJsonObject?.optInt("amount_per_day"),
-                                    bookingTotalPrice = getCarJsonObject?.optInt("booking_total_price"),
-                                    fuelType = getCarJsonObject?.optString("fuel_en"),
-                                    carDetails = Pair(model.first, model.second),
-                                    isBlueTooth = Pair(blueTooth.first, blueTooth.second),
-                                    isGps = Pair(gps.first, gps.second),
+                        carData = CarData(
+                            id = getCarJsonObject.optInt("id"),
+                            name = Pair(brand.first, brand.second),
+                            carImage = getCarJsonObject?.optString("cover_media"),
+                            gearType = Pair(transmission.first, transmission.second),
+                            doors = getCarJsonObject?.optInt("door_count"),
+                            seats = getCarJsonObject?.optInt("seating_capacity"),
+                            rent = getCarJsonObject?.optInt("amount_per_day"),
+                            bookingTotalPrice = getCarJsonObject?.optInt("booking_total_price"),
+                            fuelType = getCarJsonObject?.optString("fuel_en"),
+                            carDetails = Pair(model.first, model.second),
+                            isBlueTooth = Pair(blueTooth.first, blueTooth.second),
+                            isGps = Pair(gps.first, gps.second),
 //                            detailCarImages = Triple(detailCarImages.first,detailCarImages.second,detailCarImages.third),
-                                    detailCarImages = detailCarImages,
-                                    viewType = loadDataView
-                                )
-                                adapter.carList.addAll(listOf(carData))
-                                isLoading = false
-                            }
+                            detailCarImages = detailCarImages,
+                            viewType = loadDataView
+                        )
+                        adapter.carList.addAll(listOf(carData))
+                        isLoading = false
+                    }
 
-                            withContext(Dispatchers.Main) {
-                                adapter.notifyDataSetChanged()
-                            }
+                    withContext(Dispatchers.Main) {
+                        adapter.notifyDataSetChanged()
+                    }
 
-                        }
+                }
             }
         }
 
@@ -263,10 +349,68 @@ class HomeFragment : Fragment() {
                 languageSwitch.layoutDirection = layoutDirection
                 rvCarCategory.layoutDirection = layoutDirection
             }
-
         }
-
     }
+
+    private fun alertBox() {
+        AlertDialog.Builder(context).setTitle("Download Image")
+            .setPositiveButton("Download Now") { dialog, id ->
+                imageUrl?.let { downloadImage(it) }
+            }.setNeutralButton("Cancel") { dialog, id -> dialog.cancel() }
+            .setNegativeButton("Schedule") { dialog, _ ->
+                downloadDateTimePicker()
+            }.show()
+
+
+/*        val downloadOption = arrayOf("Now","Schedule","Cancel")
+        AlertDialog.Builder(context).setItems(downloadOption,DialogInterface.OnClickListener { dialogInterface, i ->
+            when(downloadOption){
+                arrayOf("Now") -> { toast("Downloading")}
+                arrayOf("Schedule") -> { toast("Scheduled..")}
+                arrayOf("Cancel") -> { dialogInterface.cancel()}
+            }
+        }).show()*/
+    }
+
+    private fun askPermissions() {
+        val activity = requireActivity()
+        val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                AlertDialog.Builder(activity)
+                    .setTitle("Permission required")
+                    .setMessage("Permission required to save photos from the Web.")
+                    .setPositiveButton("Accept") { dialog, _ ->
+                        ActivityCompat.requestPermissions(
+                            activity, arrayOf(permission),
+                            MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE)
+                    }
+                    .setNegativeButton("Deny") { dialog, _ -> dialog.cancel() }
+                    .show()
+            } else {
+                ActivityCompat.requestPermissions(activity, arrayOf(permission), MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE)
+
+            }
+        } else {
+            alertBox()
+        }
+    }
+
+    private fun downloadDateTimePicker(){
+        val calendarFragment = context?.let {
+            DatePickerDialog(it,
+                { view, year, monthOfYear, dayOfMonth ->
+                    var date = (dayOfMonth.toString() + "/"
+                            + (monthOfYear + 1) + "/" + year)
+                }, currentYear, currentMonth, currentDay
+            )
+        }
+        calendarFragment?.datePicker?.minDate=System.currentTimeMillis()
+        calendarFragment?.show()
+    }
+
 }
 
 fun View.visible() {
@@ -275,4 +419,8 @@ fun View.visible() {
 
 fun View.hide() {
     this.visibility = View.GONE
+}
+
+fun Fragment.toast(message: String){
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
