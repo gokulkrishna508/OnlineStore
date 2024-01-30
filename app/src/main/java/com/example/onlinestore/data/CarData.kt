@@ -33,45 +33,97 @@ data class CarData(
 
 
 
+/*// ... (existing code)
 
-/*class MyAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AlarmReceiver(private val homeFragment: HomeFragment) : BroadcastReceiver() {
+    // ... (rest of the class remains unchanged)
 
-    private val TYPE_ITEM = 0
-    private val TYPE_LOADING = 1
+    override fun onReceive(context: Context?, intent: Intent?) {
+        // ... (existing code)
 
-    private var data: List<String> = ArrayList()
-    private var isLoading = false
-
-    // ... other methods
-
-    override fun getItemViewType(position: Int): Int {
-        return if (isLoading && position == itemCount - 1) {
-            TYPE_LOADING
-        } else {
-            TYPE_ITEM
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == TYPE_ITEM) {
-            // create and return your regular item view holder
-        } else {
-            // create and return your loading item view holder
-        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (getItemViewType(position) == TYPE_ITEM) {
-            // bind your regular item view holder
-        } else {
-            // bind your loading item view holder
-        }
-    }
-
-    fun setLoading(isLoading: Boolean) {
-        this.isLoading = isLoading
-        notifyDataSetChanged()
+        // Call the function in HomeFragment
+        homeFragment.imageUrl?.let { homeFragment.startScheduledDownload(it) }
     }
 }
+
+
+class AlarmReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        // Handle the alarm trigger here
+        val imageUrl = intent?.getStringExtra("imageUrl")
+        imageUrl?.let {
+            // Call the function to start the scheduled download
+            startScheduledDownload(it)
+        }
+    }
+}
+
+
+private var scheduledDownloadTime: Long = 0
+
+// ... (existing code)
+
+private fun alertBox() {
+  AlertDialog.Builder(context).setTitle("Download Image")
+      .setPositiveButton("Download Now") { dialog, id ->
+          imageUrl?.let { downloadImage(it) }
+      }.setNeutralButton("Cancel") { dialog, id -> dialog.cancel() }
+      .setNegativeButton("Schedule") { dialog, _ ->
+          timePicker()
+      }.show()
+}
+
+// ... (existing code)
+
+private fun startScheduledDownload(time: String) {
+  val scheduledTimeInMillis = calculateScheduledTimeInMillis(time)
+
+  if (scheduledTimeInMillis > System.currentTimeMillis()) {
+      scheduledDownloadTime = scheduledTimeInMillis
+      scheduleDownloadAtTime(scheduledTimeInMillis)
+      toast("Download scheduled successfully at $time")
+  } else {
+      toast("Invalid scheduled time")
+  }
+}
+
+private fun calculateScheduledTimeInMillis(time: String): Long {
+  // Convert the scheduled time to milliseconds
+  // You may need to adjust this logic based on your time format
+  val calendar = Calendar.getInstance()
+  val parts = time.trim().split(":")
+  if (parts.size == 2) {
+      val hour = parts[0].toInt()
+      val minute = parts[1].toInt()
+      calendar.set(Calendar.HOUR_OF_DAY, hour)
+      calendar.set(Calendar.MINUTE, minute)
+      calendar.set(Calendar.SECOND, 0)
+      return calendar.timeInMillis
+  }
+  return 0
+}
+
+private fun scheduleDownloadAtTime(timeInMillis: Long) {
+  val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+  val intent = Intent(context, AlarmReceiver::class.java)
+  val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+  // Set the alarm to trigger at the scheduled time
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      alarmManager.setExactAndAllowWhileIdle(
+          AlarmManager.RTC_WAKEUP,
+          timeInMillis,
+          pendingIntent
+      )
+  } else {
+      alarmManager.setExact(
+          AlarmManager.RTC_WAKEUP,
+          timeInMillis,
+          pendingIntent
+      )
+  }
+}
+
+// ... (existing code)
 */
 

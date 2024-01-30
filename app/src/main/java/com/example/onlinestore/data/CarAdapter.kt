@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.onlinestore.R
+import com.example.onlinestore.data.repositories.AlarmReceiver
 import com.example.onlinestore.databinding.CellCarItemLayoutBinding
 import com.example.onlinestore.databinding.CellProgressBarLayoutBinding
 
@@ -98,6 +99,7 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
 
                 downloadButton.setOnClickListener {
                     item.carImage?.let { onDownloadImage?.invoke( it) }
+                    AlarmReceiver.URLTobeDownload = item.carImage
                 }
             }
         }

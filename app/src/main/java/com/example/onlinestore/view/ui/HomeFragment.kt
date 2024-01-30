@@ -2,16 +2,22 @@ package com.example.onlinestore.view.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.AlertDialog
-import android.app.DatePickerDialog
 import android.app.DownloadManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +36,7 @@ import com.example.onlinestore.data.CarAdapter
 import com.example.onlinestore.data.CarAdapter.Companion.DATA_VIEW
 import com.example.onlinestore.data.CarAdapter.Companion.LOADER_VIEW
 import com.example.onlinestore.data.CarData
+import com.example.onlinestore.data.repositories.AlarmReceiver
 import com.example.onlinestore.data.repositories.BannerViewPagerAdapter
 import com.example.onlinestore.databinding.FragmentHomeBinding
 import com.example.onlinestore.view_model.CarViewModel
@@ -39,6 +46,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
+
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
@@ -52,11 +60,14 @@ class HomeFragment : Fragment() {
     private var msg: String? = ""
     private var lastMsg = ""
 
-    private var imageUrl: String? =null
+    var imageUrl: String? =null
     private val now = Calendar.getInstance()
-    private val currentYear: Int = now.get(Calendar.YEAR)
-    private val currentMonth: Int = now.get(Calendar.MONTH)
-    private val currentDay: Int = now.get(Calendar.DAY_OF_MONTH)
+    private var mHour = 0
+    private var mMinute = 0
+    private var scheduleTime: String?=null
+
+    private var scheduledDownloadTime: Long = 0
+
 
     companion object {
         var positionInvoke: Int? = null
@@ -91,7 +102,7 @@ class HomeFragment : Fragment() {
 
 
     @SuppressLint("Range")
-    private fun downloadImage(url: String) {
+     fun downloadImage(url: String) {
         val directory = File(Environment.DIRECTORY_PICTURES)
 
         if (!directory.exists()) { directory.mkdirs() }
@@ -227,6 +238,7 @@ class HomeFragment : Fragment() {
                 }
                 else alertBox()
         }
+        createNotificationChannel()
     }
 
 
@@ -358,9 +370,8 @@ class HomeFragment : Fragment() {
                 imageUrl?.let { downloadImage(it) }
             }.setNeutralButton("Cancel") { dialog, id -> dialog.cancel() }
             .setNegativeButton("Schedule") { dialog, _ ->
-                downloadDateTimePicker()
+                timePicker()
             }.show()
-
 
 /*        val downloadOption = arrayOf("Now","Schedule","Cancel")
         AlertDialog.Builder(context).setItems(downloadOption,DialogInterface.OnClickListener { dialogInterface, i ->
@@ -391,14 +402,13 @@ class HomeFragment : Fragment() {
                     .show()
             } else {
                 ActivityCompat.requestPermissions(activity, arrayOf(permission), MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE)
-
             }
         } else {
             alertBox()
         }
     }
 
-    private fun downloadDateTimePicker(){
+/*    private fun downloadDateTimePicker(){
         val calendarFragment = context?.let {
             DatePickerDialog(it,
                 { view, year, monthOfYear, dayOfMonth ->
@@ -407,8 +417,100 @@ class HomeFragment : Fragment() {
                 }, currentYear, currentMonth, currentDay
             )
         }
+
         calendarFragment?.datePicker?.minDate=System.currentTimeMillis()
         calendarFragment?.show()
+    }*/
+
+    private fun timePicker() {
+        mHour = now[Calendar.HOUR_OF_DAY]
+        mMinute = now[Calendar.MINUTE]
+
+        val timePickerDialog = TimePickerDialog(context,
+            { view, hourOfDay, minute ->
+                mHour = hourOfDay
+                mMinute = minute
+                 scheduleTime = (" $hourOfDay:$minute")
+
+                scheduleTime?.let { startScheduledDownload(it) }
+
+            }, mHour, mMinute, false
+        )
+        timePickerDialog.show()
+
+
+    }
+
+
+    @SuppressLint("ScheduleExactAlarm")
+     fun startScheduledDownload(time : String){
+        val scheduledTimeInMillis = calculateScheduledTimeInMillis(time)
+
+        if (scheduledTimeInMillis > System.currentTimeMillis()) {
+            scheduledDownloadTime = scheduledTimeInMillis
+            scheduleDownloadAtTime(scheduledTimeInMillis)
+            toast("Download scheduled successfully at $time")
+            Log.d("@@download", "startScheduledDownload: $time")
+        } else {
+            toast("Invalid scheduled time")
+        }
+    }
+
+    @SuppressLint("ScheduleExactAlarm")
+    private fun scheduleDownloadAtTime(timeInMillis: Long) {
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        Log.e("@@scheduled", "$intent " )
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                timeInMillis,
+                pendingIntent
+            )
+            Log.d("@@exactIn", "scheduleDownloadAtTime:>>>>>> ")
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                timeInMillis,
+                pendingIntent
+            )
+            Log.d("@@exactIdle", "scheduleDownloadAtTime: >>>>")
+        }
+    }
+
+    @SuppressLint("ScheduleExactAlarm")
+    fun startDownload(imageUrl: String?) {
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        imageUrl?.let { downloadImage(it) }
+    }
+
+    private fun calculateScheduledTimeInMillis(time: String): Long {
+        val calendar = Calendar.getInstance()
+        val parts = time.trim().split(":")
+        if (parts.size == 2) {
+            val hour = parts[0].toInt()
+            val minute = parts[1].toInt()
+            calendar.set(Calendar.HOUR_OF_DAY, hour)
+            calendar.set(Calendar.MINUTE, minute)
+            calendar.set(Calendar.SECOND, 0)
+            return calendar.timeInMillis
+        }
+        return 0
+    }
+
+    private fun createNotificationChannel(){
+            val channelId = "download_Image_at_time"
+            val channelName = "alarm_name"
+            val notificationManager = context?.getSystemService(NotificationManager::class.java)
+            val channel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationManager?.createNotificationChannel(channel)
     }
 
 }

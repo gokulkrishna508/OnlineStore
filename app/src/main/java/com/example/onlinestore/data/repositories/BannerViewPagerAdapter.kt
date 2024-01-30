@@ -37,8 +37,7 @@ class BannerViewPagerAdapter(val onItemClick: ((item: CarData) -> Unit)?=null) :
         RecyclerView.ViewHolder(itemBinding.root) {
         fun bindBanner(item: String) {
             itemBinding.apply {
-                val detailImage = carDataCompanionObject?.detailCarImages
-                Log.e("@@detailImage", "$detailImage" )
+
                 Glide.with(bannerImageView).load(item)
                     .placeholder(R.drawable.car_img2).into(bannerImageView)
             }
