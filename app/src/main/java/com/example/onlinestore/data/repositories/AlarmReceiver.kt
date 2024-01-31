@@ -1,31 +1,33 @@
 package com.example.onlinestore.data.repositories
 
+import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
+import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.LifecycleOwner
+import com.bumptech.glide.manager.Lifecycle
 import com.example.onlinestore.R
-import com.example.onlinestore.view.ui.HomeFragment
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.io.File
 
 class AlarmReceiver: BroadcastReceiver() {
-    companion object{
+
+    companion object {
         var URLTobeDownload: String? = null
     }
     override fun onReceive(context: Context?, intent: Intent?) {
-        val homeFragment: HomeFragment = HomeFragment()
 
-        val viewer = Intent(context, HomeFragment::class.java)
-        intent?.flags =  Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        val pendingIntent = PendingIntent.getActivity(context,0,viewer, PendingIntent.FLAG_IMMUTABLE)
+        val imageId = intent?.getStringExtra("job_id")
+        Log.e("@@job_id","<<<<<< $imageId")
         val channelId = "download_Image_at_time"
-        Log.e("@@run", "onReceive: >>>>, $URLTobeDownload " )
-
         context?.let { getContext ->
             val notificationManager = getContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val builder = NotificationCompat.Builder(getContext, channelId)
@@ -33,12 +35,53 @@ class AlarmReceiver: BroadcastReceiver() {
                 .setContentTitle("Download Alarm")
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-            Log.e("@@run2", "onReceive: >>>>2 " )
-
-            URLTobeDownload?.let { homeFragment.startDownload(it) }
+                //.setContentIntent(pendingIntent)
             notificationManager.notify(1, builder.build())
         }
-
+        startDownload(imageId,context)
     }
+
+    @SuppressLint("ScheduleExactAlarm")
+    fun startDownload(imageUrl: String?,context: Context?) {
+        imageUrl?.let { downloadImage(it,context) }
+    }
+
+    @SuppressLint("Range")
+    fun downloadImage(url: String,context: Context?) {
+        val directory = File(Environment.DIRECTORY_PICTURES)
+
+        if (!directory.exists()) { directory.mkdirs() }
+
+        val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+        val downloadUri = Uri.parse(url)
+
+        val request = DownloadManager.Request(downloadUri).apply {
+            setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(false)
+                .setTitle(url.substring(url.lastIndexOf("/") + 1))
+                .setDescription("")
+                .setDestinationInExternalPublicDir(
+                    directory.toString(),
+                    url.substring(url.lastIndexOf("/") + 1)
+                )
+        }
+
+        val downloadId = downloadManager.enqueue(request)
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        Thread{
+            var downloading = true
+            while (downloading) {
+                val cursor: Cursor = downloadManager.query(query)
+                cursor.moveToFirst()
+                if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
+                    downloading = false
+                }
+                cursor.close()
+            }
+        }.start()
+    }
+
+
+
 }

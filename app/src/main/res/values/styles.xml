@@ -10,4 +10,17 @@
 <item name="cornerSizeTopRight">23dp</item>
 <item name="cornerSizeTopLeft">23dp</item>
 </style>
+
+    <style name="DatePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:timePickerStyle">@style/MyTimePickerStyle</item>
+        <item name="android:colorAccent">@color/red_line</item>
+        <item name="colorPrimary">@color/light_blue</item>
+        <item name="colorSecondary">@color/text_green</item>
+        <item name="android:colorButtonNormal">@color/light_blue</item>
+    </style>
+
+    <style name="MyTimePickerStyle" parent="@android:style/Widget.Material.Light.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+    </style>
+
 </resources>
