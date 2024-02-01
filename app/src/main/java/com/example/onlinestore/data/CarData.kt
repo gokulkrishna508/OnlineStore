@@ -30,100 +30,57 @@ data class CarData(
 
 
 
+/* @SuppressLint("ScheduleExactAlarm")
+  fun startScheduledDownload(time: Long) {
+      val scheduledTimeInMillis = scheduleTime
+      val standardDateFormat = convertLongToTime(time)
 
+      if (scheduledTimeInMillis != null) {
+          if (scheduledTimeInMillis > System.currentTimeMillis()) {
+              scheduledDownloadTime = scheduledTimeInMillis
+              counter++
+              Log.d("@@counterStart++", "startScheduledDownloadStart: $counter") // again downloading the downloaded images which means for loop counting again
+              for (i in 0 until counter) {
+                  val intent = Intent(context, AlarmReceiver::class.java)
+                  intent.putExtra("job_id", imageUrl)
 
+                  scheduleDownloadAtTime(scheduledTimeInMillis, intent)
+                  toast("Download scheduled successfully at $standardDateFormat")
+              }
 
-/*// ... (existing code)
-
-class AlarmReceiver(private val homeFragment: HomeFragment) : BroadcastReceiver() {
-    // ... (rest of the class remains unchanged)
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-        // ... (existing code)
-
-        // Call the function in HomeFragment
-        homeFragment.imageUrl?.let { homeFragment.startScheduledDownload(it) }
-    }
-}
-
-
-class AlarmReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        // Handle the alarm trigger here
-        val imageUrl = intent?.getStringExtra("imageUrl")
-        imageUrl?.let {
-            // Call the function to start the scheduled download
-            startScheduledDownload(it)
-        }
-    }
-}
-
-
-private var scheduledDownloadTime: Long = 0
-
-// ... (existing code)
-
-private fun alertBox() {
-  AlertDialog.Builder(context).setTitle("Download Image")
-      .setPositiveButton("Download Now") { dialog, id ->
-          imageUrl?.let { downloadImage(it) }
-      }.setNeutralButton("Cancel") { dialog, id -> dialog.cancel() }
-      .setNegativeButton("Schedule") { dialog, _ ->
-          timePicker()
-      }.show()
-}
-
-// ... (existing code)
-
-private fun startScheduledDownload(time: String) {
-  val scheduledTimeInMillis = calculateScheduledTimeInMillis(time)
-
-  if (scheduledTimeInMillis > System.currentTimeMillis()) {
-      scheduledDownloadTime = scheduledTimeInMillis
-      scheduleDownloadAtTime(scheduledTimeInMillis)
-      toast("Download scheduled successfully at $time")
-  } else {
-      toast("Invalid scheduled time")
+              Log.d("@@counter++", "startScheduledDownload: $counter")
+              Log.d("@@download", "startScheduledDownload: $standardDateFormat")
+          } else {
+              toast("Invalid scheduled time")
+          }
+      }
   }
-}
 
-private fun calculateScheduledTimeInMillis(time: String): Long {
-  // Convert the scheduled time to milliseconds
-  // You may need to adjust this logic based on your time format
-  val calendar = Calendar.getInstance()
-  val parts = time.trim().split(":")
-  if (parts.size == 2) {
-      val hour = parts[0].toInt()
-      val minute = parts[1].toInt()
-      calendar.set(Calendar.HOUR_OF_DAY, hour)
-      calendar.set(Calendar.MINUTE, minute)
-      calendar.set(Calendar.SECOND, 0)
-      return calendar.timeInMillis
-  }
-  return 0
-}
+  @SuppressLint("ScheduleExactAlarm")
+  fun scheduleDownloadAtTime(timeInMillis: Long, intent: Intent) {
+      val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-private fun scheduleDownloadAtTime(timeInMillis: Long) {
-  val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-  val intent = Intent(context, AlarmReceiver::class.java)
-  val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+      for (i in 0 until counter) {
+          val pendingIntent = PendingIntent.getBroadcast(
+              context,
+              i,
+              intent,
+              PendingIntent.FLAG_MUTABLE
+          )
 
-  // Set the alarm to trigger at the scheduled time
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      alarmManager.setExactAndAllowWhileIdle(
-          AlarmManager.RTC_WAKEUP,
-          timeInMillis,
-          pendingIntent
-      )
-  } else {
-      alarmManager.setExact(
-          AlarmManager.RTC_WAKEUP,
-          timeInMillis,
-          pendingIntent
-      )
-  }
-}
-
-// ... (existing code)
-*/
+          if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+              alarmManager.setExact(
+                  AlarmManager.RTC_WAKEUP,
+                  timeInMillis,
+                  pendingIntent
+              )
+          } else {
+              alarmManager.setExact(
+                  AlarmManager.RTC_WAKEUP,
+                  timeInMillis,
+                  pendingIntent
+              )
+          }
+      }
+  }*/
 

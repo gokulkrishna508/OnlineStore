@@ -10,12 +10,8 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.LifecycleOwner
-import com.bumptech.glide.manager.Lifecycle
 import com.example.onlinestore.R
-import kotlinx.coroutines.Dispatchers
 import java.io.File
 
 class AlarmReceiver: BroadcastReceiver() {
@@ -26,7 +22,6 @@ class AlarmReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val imageId = intent?.getStringExtra("job_id")
-        Log.e("@@job_id","<<<<<< $imageId")
         val channelId = "download_Image_at_time"
         context?.let { getContext ->
             val notificationManager = getContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -36,6 +31,7 @@ class AlarmReceiver: BroadcastReceiver() {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 //.setContentIntent(pendingIntent)
+
             notificationManager.notify(1, builder.build())
         }
         startDownload(imageId,context)
@@ -48,12 +44,10 @@ class AlarmReceiver: BroadcastReceiver() {
 
     @SuppressLint("Range")
     fun downloadImage(url: String,context: Context?) {
+
         val directory = File(Environment.DIRECTORY_PICTURES)
-
         if (!directory.exists()) { directory.mkdirs() }
-
         val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
         val downloadUri = Uri.parse(url)
 
         val request = DownloadManager.Request(downloadUri).apply {
@@ -81,7 +75,5 @@ class AlarmReceiver: BroadcastReceiver() {
             }
         }.start()
     }
-
-
 
 }

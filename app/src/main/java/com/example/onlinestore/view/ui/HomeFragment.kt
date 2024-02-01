@@ -50,7 +50,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 
-
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: CarAdapter
@@ -59,22 +58,13 @@ class HomeFragment : Fragment() {
     private var isLoading = false
     private val localizationDelegate = LocalizationDelegate()
     private var carData: CarData? = null
-    var loadDataView: Int? = null
+    private var loadDataView: Int? = null
     private var msg: String? = ""
     private var lastMsg = ""
-
-    var imageUrl: String? =null
-    private var current = Calendar.getInstance()
-    private var currentDay =current[Calendar.DAY_OF_MONTH]
-    private var currentMonth = current[Calendar.MONTH]
-    private var currentYear = current[Calendar.YEAR]
-    private var mHour = 0
-    private var mMinute = 0
-    private var scheduleTime: Long?=null
-    private var scheduleDate: String?=null
-    private var scheduledDownloadTime: Long = 0
-
-
+    private var imageUrl: String? = null
+    private var scheduleTime: Long? = null
+//    private var scheduledDownloadTime: Long = 0
+    private var counter = 0
 
     companion object {
         var positionInvoke: Int? = null
@@ -107,15 +97,21 @@ class HomeFragment : Fragment() {
         binding.rvCarCategory.smoothScrollToPosition(currentPage)
     }
 
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        loadPage()
+    }
 
     @SuppressLint("Range")
-     fun downloadImage(url: String) {
+    fun downloadImage(url: String) {
         val directory = File(Environment.DIRECTORY_PICTURES)
 
-        if (!directory.exists()) { directory.mkdirs() }
+        if (!directory.exists()) {
+            directory.mkdirs()
+        }
 
-        val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager =
+            requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         val downloadUri = Uri.parse(url)
 
@@ -133,10 +129,10 @@ class HomeFragment : Fragment() {
         Log.d("@@checkDownload", "downloadImage:>>>> ")
         val downloadId = downloadManager.enqueue(request)
         val query = DownloadManager.Query().setFilterById(downloadId)
-        Thread{
+        Thread {
             var downloading = true
             while (downloading) {
-                val cursor:     Cursor = downloadManager.query(query)
+                val cursor: Cursor = downloadManager.query(query)
                 cursor.moveToFirst()
                 if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
                     downloading = false
@@ -155,8 +151,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun statusMessage(url: String, directory: File, status: Int): String {
-        var msg = ""
-        msg = when (status) {
+        val msg: String = when (status) {
             DownloadManager.STATUS_FAILED -> "Download has been failed, please try again"
             DownloadManager.STATUS_PAUSED -> "Paused"
             DownloadManager.STATUS_PENDING -> "Pending"
@@ -164,15 +159,13 @@ class HomeFragment : Fragment() {
             DownloadManager.STATUS_SUCCESSFUL -> "Image downloaded successfully in $directory" + File.separator + url.substring(
                 url.lastIndexOf("/") + 1
             )
+
             else -> "There's nothing to download"
         }
         return msg
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        loadPage()
-    }
+
 
 
     private fun loadPage() = binding.apply {
@@ -242,10 +235,9 @@ class HomeFragment : Fragment() {
 
         adapter.onDownloadImage = { position ->
             imageUrl = position
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Build.VERSION.SDK_INT >= 29) {
-                    askPermissions()
-                }
-                else alertBox()
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || Build.VERSION.SDK_INT >= 29) {
+                askPermissions()
+            } else alertBox()
         }
         createNotificationChannel()
     }
@@ -255,7 +247,6 @@ class HomeFragment : Fragment() {
     private fun carRecyclerView() = binding.apply {
 
         viewLifecycleOwner.lifecycleScope.launch {
-
             carViewModel.apiResponseStateFlow.collect { response ->
 
                 if (currentPage >= 1 && adapter.carList.isNotEmpty()) {
@@ -298,14 +289,6 @@ class HomeFragment : Fragment() {
                             getCarJsonObject?.optJSONArray("facilities")?.optJSONObject(1)
                                 ?.optString("name_ar")
                         )
-                        /*
-                                                val detailCarImages: MutableList<String?> = mutableListOf(
-                                                    getCarJsonObject?.optJSONArray("media")?.optString(0),
-                                                    getCarJsonObject?.optJSONArray("media")?.optString(1),
-                                                    getCarJsonObject?.optJSONArray("media")?.optString(2),
-                                                    getCarJsonObject?.optJSONArray("media")?.optString(3),
-                                                    getCarJsonObject?.optJSONArray("media")?.optString(4)
-                                                )*/
 
                         loadDataView = DATA_VIEW
 
@@ -344,7 +327,6 @@ class HomeFragment : Fragment() {
                             carDetails = Pair(model.first, model.second),
                             isBlueTooth = Pair(blueTooth.first, blueTooth.second),
                             isGps = Pair(gps.first, gps.second),
-//                            detailCarImages = Triple(detailCarImages.first,detailCarImages.second,detailCarImages.third),
                             detailCarImages = detailCarImages,
                             viewType = loadDataView
                         )
@@ -375,42 +357,51 @@ class HomeFragment : Fragment() {
 
     private fun alertBox() {
         AlertDialog.Builder(context).setTitle("Download Image")
-            .setPositiveButton("Download Now") { dialog, id ->
+            .setPositiveButton("Download Now") { _, _ ->
                 imageUrl?.let { downloadImage(it) }
-            }.setNeutralButton("Cancel") { dialog, id -> dialog.cancel() }
-            .setNegativeButton("Schedule") { dialog, _ ->
+            }.setNeutralButton("Cancel") { dialog, _ -> dialog.cancel() }
+            .setNegativeButton("Schedule") { _, _ ->
                 dateTimePicker()
             }.show()
 
-/*        val downloadOption = arrayOf("Now","Schedule","Cancel")
-        AlertDialog.Builder(context).setItems(downloadOption,DialogInterface.OnClickListener { dialogInterface, i ->
-            when(downloadOption){
-                arrayOf("Now") -> { toast("Downloading")}
-                arrayOf("Schedule") -> { toast("Scheduled..")}
-                arrayOf("Cancel") -> { dialogInterface.cancel()}
-            }
-        }).show()*/
+        /*        val downloadOption = arrayOf("Now","Schedule","Cancel")
+                AlertDialog.Builder(context).setItems(downloadOption,DialogInterface.OnClickListener { dialogInterface, i ->
+                    when(downloadOption){
+                        arrayOf("Now") -> { toast("Downloading")}
+                        arrayOf("Schedule") -> { toast("Scheduled..")}
+                        arrayOf("Cancel") -> { dialogInterface.cancel()}
+                    }
+                }).show()*/
     }
 
     private fun askPermissions() {
         val activity = requireActivity()
         val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                activity,
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             // Permission is not granted
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
                 AlertDialog.Builder(activity)
                     .setTitle("Permission required")
                     .setMessage("Permission required to save photos from the Web.")
-                    .setPositiveButton("Accept") { dialog, _ ->
+                    .setPositiveButton("Accept") { _, _ ->
                         ActivityCompat.requestPermissions(
                             activity, arrayOf(permission),
-                            MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE)
+                            MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+                        )
                     }
                     .setNegativeButton("Deny") { dialog, _ -> dialog.cancel() }
                     .show()
             } else {
-                ActivityCompat.requestPermissions(activity, arrayOf(permission), MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE)
+                ActivityCompat.requestPermissions(
+                    activity,
+                    arrayOf(permission),
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+                )
             }
         } else {
             alertBox()
@@ -448,28 +439,34 @@ class HomeFragment : Fragment() {
             TimePickerDialog(requireContext(), { _, hour, minute ->
                 val pickedDateTime = Calendar.getInstance()
                 pickedDateTime.set(year, month, day, hour, minute)
-                scheduleTime= pickedDateTime.timeInMillis
 
+                scheduleTime = pickedDateTime.timeInMillis
                 scheduleTime?.let { startScheduledDownload(it) }
-
-                Log.d("@@pickedtime", "timePicker: ${pickedDateTime.timeInMillis}")
 
             }, startHour, startMinute, false).show()
         }, startYear, startMonth, startDay).show()
     }
 
-
-
     @SuppressLint("ScheduleExactAlarm")
-      fun startScheduledDownload(time : Long){
+    fun startScheduledDownload(time: Long) {
         val scheduledTimeInMillis = scheduleTime
         val standardDateFormat = convertLongToTime(time)
 
         if (scheduledTimeInMillis != null) {
             if (scheduledTimeInMillis > System.currentTimeMillis()) {
-                scheduledDownloadTime = scheduledTimeInMillis
-                scheduleDownloadAtTime(scheduledTimeInMillis)
-                toast("Download scheduled successfully at $standardDateFormat")
+                Log.d("@@counterStart++", "startScheduledDownloadStart: $counter")
+
+                val newCounter = counter+1
+
+                for (i in 0 until newCounter) {
+                    val intent = Intent(context, AlarmReceiver::class.java)
+                    intent.putExtra("job_id", imageUrl)
+
+                    scheduleDownloadAtTime(scheduledTimeInMillis, intent, newCounter)
+                    toast("Download scheduled successfully at $standardDateFormat")
+                }
+                counter = newCounter
+                Log.d("@@counter++", "startScheduledDownload: $counter")
                 Log.d("@@download", "startScheduledDownload: $standardDateFormat")
             } else {
                 toast("Invalid scheduled time")
@@ -478,15 +475,10 @@ class HomeFragment : Fragment() {
     }
 
     @SuppressLint("ScheduleExactAlarm")
-     fun scheduleDownloadAtTime(timeInMillis: Long) {
-
+    fun scheduleDownloadAtTime(timeInMillis: Long, intent: Intent, newCounter: Int) {
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        val intent = Intent(context, AlarmReceiver::class.java)
-
-        intent.putExtra("job_id",imageUrl)
-
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(context, newCounter, intent, PendingIntent.FLAG_MUTABLE)
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             alarmManager.setExact(
@@ -503,6 +495,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+
     /*private fun calculateScheduledTimeInMillis(time: Long): Long {
         val calendar = Calendar.getInstance()
         val parts = time.trim().split(":")
@@ -517,17 +510,16 @@ class HomeFragment : Fragment() {
         return 0
     }*/
 
-
-    private fun createNotificationChannel(){
-            val channelId = "download_Image_at_time"
-            val channelName = "alarm_name"
-            val notificationManager = context?.getSystemService(NotificationManager::class.java)
-            val channel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationManager?.createNotificationChannel(channel)
+    private fun createNotificationChannel() {
+        val channelId = "download_Image_at_time"
+        val channelName = "alarm_name"
+        val notificationManager = context?.getSystemService(NotificationManager::class.java)
+        val channel = NotificationChannel(
+            channelId,
+            channelName,
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationManager?.createNotificationChannel(channel)
     }
 
 }
@@ -540,12 +532,13 @@ fun View.hide() {
     this.visibility = View.GONE
 }
 
-fun Fragment.toast(message: String){
+fun Fragment.toast(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
+@SuppressLint("SimpleDateFormat")
 fun convertLongToTime(time: Long): String {
     val date = Date(time)
-    val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
+    val format = SimpleDateFormat("dd.MM.yyyy hh:mm a")
     return format.format(date)
 }
