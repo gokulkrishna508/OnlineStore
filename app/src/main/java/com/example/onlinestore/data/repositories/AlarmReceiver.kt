@@ -3,36 +3,54 @@ package com.example.onlinestore.data.repositories
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
-import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.onlinestore.R
 import java.io.File
 
+
+const val NOTIFICATION_ID = 1
+//const val PICK_FILE_RESULT_CODE=0
 class AlarmReceiver: BroadcastReceiver() {
 
     companion object {
         var URLTobeDownload: String? = null
     }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    @SuppressLint("MutableImplicitPendingIntent", "LaunchActivityFromNotification", "SuspiciousIndentation")
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val imageId = intent?.getStringExtra("job_id")
         val channelId = "download_Image_at_time"
+
         context?.let { getContext ->
             val notificationManager = getContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+//            val toLaunch = Intent()
+//            val intents= Intent(Intent.ACTION_VIEW)
+//            intents.setType("*/*")
+//            val pendingIntent = PendingIntent.getBroadcast(context, 0, toLaunch, PendingIntent.FLAG_MUTABLE)
+//            context.startActivity(intents)
+            val intents = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldev.com/")) // need to change the click event
+            val pendingIntent = PendingIntent.getActivity(context, 0, intents, PendingIntent.FLAG_MUTABLE)
+
             val builder = NotificationCompat.Builder(getContext, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Download Alarm")
+                .setContentTitle("Image Downloaded")
                 .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                //.setContentIntent(pendingIntent)
 
-            notificationManager.notify(1, builder.build())
+            notificationManager.notify(NOTIFICATION_ID, builder.build())
         }
         startDownload(imageId,context)
     }
@@ -75,5 +93,4 @@ class AlarmReceiver: BroadcastReceiver() {
             }
         }.start()
     }
-
 }

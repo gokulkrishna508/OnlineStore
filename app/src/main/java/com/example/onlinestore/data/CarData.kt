@@ -28,8 +28,6 @@ data class CarData(
 
 
 
-
-
 /* @SuppressLint("ScheduleExactAlarm")
   fun startScheduledDownload(time: Long) {
       val scheduledTimeInMillis = scheduleTime

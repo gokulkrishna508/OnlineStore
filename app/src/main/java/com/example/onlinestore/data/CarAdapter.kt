@@ -1,5 +1,6 @@
 package com.example.onlinestore.data
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -117,6 +118,12 @@ class CarAdapter(private val onItemClick: (item: CarData) -> Unit) : RecyclerVie
 
     override fun getItemViewType(position: Int): Int {
         return carList[position]?.viewType!!
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(list:MutableList<CarData?>){
+        carList = list
+        notifyDataSetChanged()
     }
 
 }

@@ -54,7 +54,6 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: CarAdapter
     private val carViewModel by viewModels<CarViewModel>()
-    private var currentPage = 1
     private var isLoading = false
     private val localizationDelegate = LocalizationDelegate()
     private var carData: CarData? = null
@@ -63,7 +62,6 @@ class HomeFragment : Fragment() {
     private var lastMsg = ""
     private var imageUrl: String? = null
     private var scheduleTime: Long? = null
-//    private var scheduledDownloadTime: Long = 0
     private var counter = 0
 
     companion object {
@@ -79,40 +77,16 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         LocalizedApp.localeLiveData.observe(viewLifecycleOwner, localizationDelegate)
-        carViewModel.fetchData(currentPage)
         initViews()
-        loadPage()
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        initViews()
-    }
-
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        loadPage()
-        binding.rvCarCategory.smoothScrollToPosition(currentPage)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        loadPage()
     }
 
     @SuppressLint("Range")
     fun downloadImage(url: String) {
         val directory = File(Environment.DIRECTORY_PICTURES)
 
-        if (!directory.exists()) {
-            directory.mkdirs()
-        }
+        if (!directory.exists()) { directory.mkdirs() }
 
-        val downloadManager =
-            requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
+        val downloadManager = requireContext().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadUri = Uri.parse(url)
 
         val request = DownloadManager.Request(downloadUri).apply {
@@ -166,57 +140,15 @@ class HomeFragment : Fragment() {
     }
 
 
-
-
-    private fun loadPage() = binding.apply {
-
-        viewLifecycleOwner.lifecycleScope.launch {
-
-            carViewModel.apiResponseStateFlow.collect { response ->
-                val meta = response?.optJSONObject("response")?.optJSONObject("result")
-                    ?.optJSONObject("meta")
-                val apiCurrentPage = meta?.optInt("current_page")
-                val apiLastPage = meta?.optInt("last_page")
-
-                rvCarCategory.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                        super.onScrolled(recyclerView, dx, dy)
-                        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-                        val totalItemCount = layoutManager.itemCount
-
-                        if (!isLoading && lastVisibleItemPosition == totalItemCount - 1) {
-                            if (apiCurrentPage != null) {
-                                if (apiCurrentPage < (apiLastPage ?: 0)) {
-
-                                    isLoading = true
-                                    adapter.carList.add(CarData(viewType = LOADER_VIEW))
-                                    adapter.notifyDataSetChanged()
-                                    currentPage++
-
-                                    lifecycleScope.launch {
-                                        delay(2000L)
-                                        carViewModel.fetchData(currentPage)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })
-            }
-        }
-    }
-
     @SuppressLint("NotifyDataSetChanged", "SuspiciousIndentation")
     private fun initViews() = binding.apply {
+
         adapter = CarAdapter { onClickCarData ->
             CarDetailFragment.carDataCompanionObject = onClickCarData
             BannerViewPagerAdapter.carDataCompanionObject = onClickCarData
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCarDetailFragment())
-
         }
-        carRecyclerView()
+        observeData()
         rvCarCategory.adapter = adapter
 
         arabicIcon.setOnClickListener {
@@ -239,24 +171,54 @@ class HomeFragment : Fragment() {
                 askPermissions()
             } else alertBox()
         }
+
         createNotificationChannel()
+
+        rvCarCategory.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                val totalItemCount = layoutManager.itemCount
+
+                if (!isLoading && lastVisibleItemPosition == totalItemCount - 1) {
+                    if(carViewModel.currentPage < carViewModel.lastPage){         //carViewModel.currentPage <= carViewModel.lastPage
+                        isLoading = true
+                        carViewModel.carList.add(CarData(viewType = LOADER_VIEW))
+                        adapter.updateList(carViewModel.carList)
+                        carViewModel.currentPage++
+                        lifecycleScope.launch {
+                            delay(2000L)
+                            carViewModel.fetchData(carViewModel.currentPage)
+                        }
+                    }
+                }
+            }
+        })
+        carViewModel.fetchData(carViewModel.currentPage)
     }
 
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun carRecyclerView() = binding.apply {
+    private fun observeData() = binding.apply {
 
         viewLifecycleOwner.lifecycleScope.launch {
+
             carViewModel.apiResponseStateFlow.collect { response ->
 
-                if (currentPage >= 1 && adapter.carList.isNotEmpty()) {
-                    adapter.carList.removeAt(adapter.carList.lastIndex)
-                    adapter.notifyDataSetChanged()
+                if (carViewModel.currentPage >= 1 && carViewModel.carList.isNotEmpty()) {
+
+                    carViewModel.carList.removeAt(carViewModel.carList.lastIndex)
+                    adapter.updateList(carViewModel.carList)
+
                 }
 
-                val data = response?.optJSONObject("response")?.optJSONObject("result")
-                    ?.optJSONArray("cars")
-
+                 val data = response?.optJSONObject("response")?.optJSONObject("result")?.optJSONArray("cars")
+                 val meta = response?.optJSONObject("response")?.optJSONObject("result")?.optJSONObject("meta")
+                 carViewModel.currentPage = meta?.optInt("current_page")?:1
+                 carViewModel.lastPage = meta?.optInt("last_page")?:1
 
                 if (data != null) {
 
@@ -302,18 +264,6 @@ class HomeFragment : Fragment() {
                             }
                         }
 
-                        /*adapter.onItemPass={
-                            it.hide()
-                       }
-
-                        if(isLoading){
-                            loadDataView = LOADER_VIEW
-                            adapter.onItemPass = {
-                                it.visible()
-                            }
-                        }*/
-
-
                         carData = CarData(
                             id = getCarJsonObject.optInt("id"),
                             name = Pair(brand.first, brand.second),
@@ -330,18 +280,15 @@ class HomeFragment : Fragment() {
                             detailCarImages = detailCarImages,
                             viewType = loadDataView
                         )
-                        adapter.carList.addAll(listOf(carData))
-                        isLoading = false
+                         carViewModel.carList.addAll(listOf(carData))
+                         isLoading = false
                     }
-
                     withContext(Dispatchers.Main) {
-                        adapter.notifyDataSetChanged()
+                        adapter.updateList(carViewModel.carList)
                     }
-
                 }
             }
         }
-
     }
 
     private inner class LocalizationDelegate : Observer<String> {
@@ -378,19 +325,14 @@ class HomeFragment : Fragment() {
         val activity = requireActivity()
         val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-        if (ContextCompat.checkSelfPermission(
-                activity,
-                permission
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission is not granted
+        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+            // Permission not granted
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
                 AlertDialog.Builder(activity)
                     .setTitle("Permission required")
                     .setMessage("Permission required to save photos from the Web.")
                     .setPositiveButton("Accept") { _, _ ->
-                        ActivityCompat.requestPermissions(
-                            activity, arrayOf(permission),
+                        ActivityCompat.requestPermissions(activity, arrayOf(permission),
                             MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
                         )
                     }
@@ -461,7 +403,6 @@ class HomeFragment : Fragment() {
                 for (i in 0 until newCounter) {
                     val intent = Intent(context, AlarmReceiver::class.java)
                     intent.putExtra("job_id", imageUrl)
-
                     scheduleDownloadAtTime(scheduledTimeInMillis, intent, newCounter)
                     toast("Download scheduled successfully at $standardDateFormat")
                 }
@@ -477,7 +418,6 @@ class HomeFragment : Fragment() {
     @SuppressLint("ScheduleExactAlarm")
     fun scheduleDownloadAtTime(timeInMillis: Long, intent: Intent, newCounter: Int) {
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
         val pendingIntent = PendingIntent.getBroadcast(context, newCounter, intent, PendingIntent.FLAG_MUTABLE)
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {

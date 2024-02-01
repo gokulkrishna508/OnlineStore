@@ -25,7 +25,7 @@ class CarRepository {
             try {
                 val responseString = response.body?.string().let { JSONObject(it) }
                 apiResponse = responseString
-                Log.e("@@url", "<<< ${request}")
+                Log.e("@@url", "<<< $request")
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.e("@@exception", "<<< ${e.message}")
